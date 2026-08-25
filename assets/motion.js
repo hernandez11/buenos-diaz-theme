@@ -433,3 +433,10 @@ export function initHero() {
     stopText()
   }
 }
+
+export function initMenu() {
+  const frame = document.querySelector('[data-bd-menu-frame]')
+  const image = document.querySelector('[data-bd-menu-image]')
+  if (!frame || !image) return () => {}
+  return initParallax(frame, image, { speed: 0.42 })
+}

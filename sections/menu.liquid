@@ -1,0 +1,526 @@
+{%- liquid
+  assign menu_image = section.settings.image
+-%}
+
+<section class="bd-menu">
+  <div class="bd-menu__hero" data-bd-menu-frame>
+    {% if menu_image != blank %}
+      <img
+        class="bd-menu__image"
+        src="{{ menu_image | image_url: width: 2400 }}"
+        alt=""
+        aria-hidden="true"
+        width="{{ menu_image.width }}"
+        height="{{ menu_image.height }}"
+        fetchpriority="high"
+        decoding="async"
+        data-bd-menu-image
+      >
+    {% else %}
+      <img
+        class="bd-menu__image"
+        src="{{ 'MenuBg.webp' | asset_url }}"
+        alt=""
+        aria-hidden="true"
+        width="2400"
+        height="1800"
+        fetchpriority="high"
+        decoding="async"
+        data-bd-menu-image
+      >
+    {% endif %}
+  </div>
+
+  <div class="bd-menu__columns">
+    {% for column in (1..3) %}
+      {%- liquid
+        assign word_one_key = 'column_' | append: column | append: '_word_one'
+        assign word_two_key = 'column_' | append: column | append: '_word_two'
+        assign sub_key = 'column_' | append: column | append: '_subheading'
+        assign word_one = section.settings[word_one_key]
+        assign word_two = section.settings[word_two_key]
+        assign subheading = section.settings[sub_key]
+        assign reveal_index = forloop.index0
+        assign column_key = column | append: ''
+      -%}
+
+      <div class="bd-menu__column">
+        <div class="reveal-mask" data-reveal-index="{{ reveal_index }}">
+          <div class="reveal-inner">
+            <h2 class="bd-menu__heading">
+              {{ word_one }}
+              {% if word_two != blank %}
+                <span class="bd-menu__rule"></span>
+                {{ word_two }}
+              {% endif %}
+            </h2>
+
+            {% if subheading != blank %}
+              <p class="bd-menu__subheading">{{ subheading }}</p>
+            {% endif %}
+
+            {%- liquid
+              assign pair_blocks = section.blocks | where: 'type', 'pair'
+              assign entry_blocks = section.blocks | where: 'type', 'entry'
+              assign pair_count = 0
+              assign entry_count = 0
+              for block in pair_blocks
+                if block.settings.column == column_key
+                  assign pair_count = pair_count | plus: 1
+                endif
+              endfor
+              for block in entry_blocks
+                if block.settings.column == column_key
+                  assign entry_count = entry_count | plus: 1
+                endif
+              endfor
+            -%}
+
+            {% if pair_count > 0 %}
+              <div class="bd-menu__pairs">
+                {% for block in pair_blocks %}
+                  {% if block.settings.column == column_key %}
+                    <div class="bd-menu__pair-row" {{ block.shopify_attributes }}>
+                      <span class="bd-menu__pair-item bd-menu__pair-item--left">
+                        {{- block.settings.left -}}
+                      </span>
+                      <span class="bd-menu__pair-rule"></span>
+                      <span class="bd-menu__pair-item bd-menu__pair-item--right">
+                        {{- block.settings.right -}}
+                      </span>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if entry_count > 0 %}
+              <div class="bd-menu__list">
+                {% for block in entry_blocks %}
+                  {% if block.settings.column == column_key %}
+                    <div class="bd-menu__entry" {{ block.shopify_attributes }}>
+                      <span class="bd-menu__entry-name">{{ block.settings.name }}</span>
+                      {% if block.settings.description != blank %}
+                        <p class="bd-menu__entry-description">{{ block.settings.description }}</p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-menu {
+    width: 100%;
+    height: 115vh;
+    height: 115svh;
+    container-type: inline-size;
+    background-color: var(--color-cream);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .bd-menu__hero {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .bd-menu__image {
+    position: absolute;
+    top: -25%;
+    left: 0;
+    width: 100%;
+    height: 150%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .bd-menu__columns {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 4cqw;
+    padding: 3cqw 8.2cqw 3.5cqw;
+  }
+
+  .bd-menu__column {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 22cqw;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bd-menu__heading {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-semibold);
+    font-size: var(--size-display-md);
+    color: var(--color-ink);
+    display: flex;
+    align-items: center;
+    gap: 0.7cqw;
+    white-space: nowrap;
+  }
+
+  .bd-menu__rule {
+    flex: 0 0 auto;
+    width: clamp(36px, 4.4cqw, 77px);
+    height: 2px;
+    background-color: var(--color-ink);
+  }
+
+  .bd-menu__subheading {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-regular);
+    font-size: var(--size-title-sm);
+    color: var(--color-ink);
+    margin-top: 0.4cqw;
+  }
+
+  .bd-menu__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9cqw;
+    margin-top: 1.4cqw;
+  }
+
+  .bd-menu__entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5cqw;
+  }
+
+  .bd-menu__entry-name {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .bd-menu__entry-description {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    color: var(--color-ink);
+  }
+
+  .bd-menu__pairs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1cqw;
+    margin-top: 1.4cqw;
+  }
+
+  .bd-menu__pair-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2cqw;
+    width: 100%;
+  }
+
+  .bd-menu__pair-item {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .bd-menu__pair-item--left {
+    text-align: left;
+  }
+
+  .bd-menu__pair-item--right {
+    text-align: right;
+  }
+
+  .bd-menu__pair-rule {
+    flex: 0 0 auto;
+    width: clamp(12px, 1.2cqw, 20px);
+    height: 1px;
+    background-color: var(--color-ink);
+  }
+
+  @media (max-width: 900px) {
+    .bd-menu {
+      height: auto;
+      overflow: visible;
+    }
+
+    .bd-menu__hero {
+      flex: 0 0 auto;
+      aspect-ratio: 4 / 3;
+    }
+
+    .bd-menu__columns {
+      flex-direction: column;
+      gap: 3rem;
+      padding-block: 2.5rem 3rem;
+      padding-left: 1.5rem;
+      padding-right: min(48%, calc(100% - 1.5rem - 16rem));
+    }
+
+    .bd-menu__column {
+      max-width: none;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .bd-menu__heading {
+      gap: 0.6rem;
+    }
+
+    .bd-menu__rule {
+      width: 2.5rem;
+    }
+
+    .bd-menu__subheading {
+      margin-top: 0.35rem;
+    }
+
+    .bd-menu__list {
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .bd-menu__entry {
+      gap: 0.3rem;
+    }
+
+    .bd-menu__pairs {
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Menu",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "text",
+      "id": "column_1_word_one",
+      "label": "Heading word one",
+      "default": "Specialty"
+    },
+    {
+      "type": "text",
+      "id": "column_1_word_two",
+      "label": "Heading word two",
+      "default": "Drinks"
+    },
+    {
+      "type": "text",
+      "id": "column_1_subheading",
+      "label": "Subheading",
+      "default": "(Bebidas Especiales)"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "text",
+      "id": "column_2_word_one",
+      "label": "Heading word one",
+      "default": "Classics"
+    },
+    {
+      "type": "text",
+      "id": "column_2_word_two",
+      "label": "Heading word two"
+    },
+    {
+      "type": "text",
+      "id": "column_2_subheading",
+      "label": "Subheading",
+      "default": "(Clásicos)"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "text",
+      "id": "column_3_word_one",
+      "label": "Heading word one",
+      "default": "Non"
+    },
+    {
+      "type": "text",
+      "id": "column_3_word_two",
+      "label": "Heading word two",
+      "default": "Coffee"
+    },
+    {
+      "type": "text",
+      "id": "column_3_subheading",
+      "label": "Subheading",
+      "default": "(Sin Café)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "entry",
+      "name": "Drink",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            { "value": "1", "label": "Column 1" },
+            { "value": "2", "label": "Column 2" },
+            { "value": "3", "label": "Column 3" }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    },
+    {
+      "type": "pair",
+      "name": "Classic pair",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            { "value": "1", "label": "Column 1" },
+            { "value": "2", "label": "Column 2" },
+            { "value": "3", "label": "Column 3" }
+          ],
+          "default": "2"
+        },
+        {
+          "type": "text",
+          "id": "left",
+          "label": "Left"
+        },
+        {
+          "type": "text",
+          "id": "right",
+          "label": "Right"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Menu",
+      "blocks": [
+        {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Fresa Horchata Latte",
+            "description": "Double espresso with strawberry puree + creamy oatmilk horchata spiced with warm cinnamon."
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Cajeta Cortado",
+            "description": "Double espresso with cajeta, a rich Mexican caramel made from slow-cooked goat’s milk."
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Guava Cream Top",
+            "description": "Double espresso latte layered beneath a silky guava and strawberry cold foam."
+          }
+        },
+        {
+          "type": "pair",
+          "settings": { "column": "2", "left": "Espresso", "right": "Flat White" }
+        },
+        {
+          "type": "pair",
+          "settings": { "column": "2", "left": "Latte", "right": "American" }
+        },
+        {
+          "type": "pair",
+          "settings": { "column": "2", "left": "Cortado", "right": "Machiato" }
+        },
+        {
+          "type": "pair",
+          "settings": { "column": "2", "left": "Cappucino", "right": "" }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "column": "3",
+            "name": "Guava Roja",
+            "description": "Tropical guava layered with the vibrant tang of hibiscus and subtle warming spices. Inspired by the refreshing jamaica agua fresca found across Mexico."
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "column": "3",
+            "name": "Horchata",
+            "description": "A traditional Mexican drink made from rice, cinnamon, and vanilla, blended into a smooth, creamy milk based agua fresca."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

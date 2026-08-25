@@ -7,10 +7,15 @@
     "info_panel": {
       "type": "info-panel",
       "settings": {}
+    },
+    "menu": {
+      "type": "menu",
+      "settings": {}
     }
   },
   "order": [
     "hero",
-    "info_panel"
+    "info_panel",
+    "menu"
   ]
 }
