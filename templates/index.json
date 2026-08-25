@@ -11,11 +11,16 @@
     "menu": {
       "type": "menu",
       "settings": {}
+    },
+    "contact": {
+      "type": "contact",
+      "settings": {}
     }
   },
   "order": [
     "hero",
     "info_panel",
-    "menu"
+    "menu",
+    "contact"
   ]
 }

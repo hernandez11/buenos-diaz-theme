@@ -440,3 +440,243 @@ export function initMenu() {
   if (!frame || !image) return () => {}
   return initParallax(frame, image, { speed: 0.42 })
 }
+
+const clamp01 = (value) => Math.min(Math.max(value, 0), 1)
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const formatPhone = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 10)
+  if (digits.length <= 3) return digits
+  if (digits.length <= 6) return '(' + digits.slice(0, 3) + ') ' + digits.slice(3)
+  return '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6)
+}
+
+export function initContactForm() {
+  const form = document.querySelector('[data-bd-contact-form]')
+  if (!form) return () => {}
+
+  const heading = document.querySelector('[data-bd-contact-heading]')
+  if (heading && form.querySelector('[data-bd-contact-posted]')) {
+    heading.classList.add('is-posted')
+  }
+
+  const steps = Array.from(form.querySelectorAll('[data-bd-step]'))
+  if (steps.length === 0) return () => {}
+
+  const dots = Array.from(form.querySelectorAll('.bd-contact__dot'))
+  const note = form.querySelector('[data-bd-contact-note]')
+  const back = form.querySelector('[data-bd-contact-back]')
+  const next = form.querySelector('[data-bd-contact-next]')
+
+  let index = 0
+
+  const currentInput = () => steps[index].querySelector('[data-bd-input]')
+
+  const validity = () => {
+    const input = currentInput()
+    const rule = steps[index].dataset.bdRule
+    const value = input.value
+    const max = Number(input.dataset.bdMax || 0)
+    const atLimit = max > 0 && value.length >= max
+
+    if (atLimit) return { ok: false, message: 'Maximum ' + max + ' characters.' }
+
+    if (rule === 'email') {
+      if (!EMAIL_PATTERN.test(value)) {
+        const message = value.length > 0 ? 'Enter a valid email address.' : ''
+        return { ok: false, message: message }
+      }
+      return { ok: true, message: '' }
+    }
+
+    if (rule === 'phone') {
+      const digits = value.replace(/\D/g, '').length
+      if (digits === 0 || digits === 10) return { ok: true, message: '' }
+      return { ok: false, message: '' }
+    }
+
+    return { ok: value.trim().length > 0, message: '' }
+  }
+
+  const paint = () => {
+    steps.forEach((step, i) => step.classList.toggle('is-active', i === index))
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index))
+
+    const state = validity()
+    if (note) {
+      note.textContent = state.message
+      note.classList.toggle('is-visible', state.message.length > 0)
+    }
+
+    if (next) {
+      next.disabled = !state.ok
+      next.textContent = index === steps.length - 1 ? 'Submit' : 'Next'
+    }
+
+    if (back) back.hidden = index === 0
+  }
+
+  const onInput = (event) => {
+    const input = event.target
+    if (!input.matches('[data-bd-input]')) return
+    if (steps[index].dataset.bdRule === 'phone') {
+      const formatted = formatPhone(input.value)
+      if (formatted !== input.value) input.value = formatted
+    }
+    paint()
+  }
+
+  const onSubmit = (event) => {
+    if (!validity().ok) {
+      event.preventDefault()
+      return
+    }
+
+    if (index < steps.length - 1) {
+      event.preventDefault()
+      index += 1
+      paint()
+      const input = currentInput()
+      if (input) input.focus({ preventScroll: true })
+      return
+    }
+
+    if (next) {
+      next.disabled = true
+      next.textContent = 'Sending'
+    }
+  }
+
+  const onBack = () => {
+    if (index === 0) return
+    index -= 1
+    paint()
+    const input = currentInput()
+    if (input) input.focus({ preventScroll: true })
+  }
+
+  form.addEventListener('input', onInput)
+  form.addEventListener('submit', onSubmit)
+  if (back) back.addEventListener('click', onBack)
+
+  paint()
+
+  return () => {
+    form.removeEventListener('input', onInput)
+    form.removeEventListener('submit', onSubmit)
+    if (back) back.removeEventListener('click', onBack)
+  }
+}
+
+const RIGHT_INSET = 0.9
+const DETAILS_DROP = 240
+const PHOTO_START = { width: 34, height: 40 }
+const PHOTO_END_WIDTH = 98.3
+
+export function initContactScroll() {
+  const wrapper = document.querySelector('[data-bd-contact]')
+  if (!wrapper) return () => {}
+
+  const photo = wrapper.querySelector('[data-bd-contact-photo]')
+  const details = wrapper.querySelector('[data-bd-contact-details]')
+  const extras = wrapper.querySelector('[data-bd-contact-extras]')
+  if (!photo || !details || !extras) return () => {}
+
+  const stacked = window.matchMedia('(max-width: 900px)')
+
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        details.classList.add('is-revealed')
+        revealObserver.disconnect()
+      }
+    },
+    { threshold: 0.2 },
+  )
+  revealObserver.observe(details)
+
+  let raf = 0
+  let current = 0
+  let target = 0
+  let running = false
+
+  const reset = () => {
+    photo.style.width = ''
+    photo.style.height = ''
+    photo.style.right = ''
+    photo.style.bottom = ''
+    details.style.color = ''
+    details.style.transform = ''
+    extras.style.opacity = ''
+  }
+
+  const measure = () => {
+    const rect = wrapper.getBoundingClientRect()
+    const travel = Math.max(rect.height - window.innerHeight, 1)
+    target = clamp01(-rect.top / travel)
+  }
+
+  const apply = (t) => {
+    const stage = photo.parentElement
+    const stageHeight = stage ? stage.clientHeight : window.innerHeight
+    const footerHeight =
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--footer-h')) || 56
+    const endTop = (footerHeight / stageHeight) * 100
+    const endHeight = 100 - endTop
+
+    photo.style.right = RIGHT_INSET + '%'
+    photo.style.bottom = '0'
+    photo.style.width = lerp(PHOTO_START.width, PHOTO_END_WIDTH, t) + '%'
+    photo.style.height = lerp(PHOTO_START.height, endHeight, t) + '%'
+
+    const tone = clamp01((t - 0.35) / 0.3)
+    const channel = Math.round(lerp(30, 255, tone))
+    details.style.color = 'rgb(' + channel + ', ' + channel + ', ' + channel + ')'
+    details.style.transform = 'translateY(' + lerp(DETAILS_DROP, 0, t) + 'px)'
+
+    extras.style.opacity = String(clamp01((t - 0.6) / 0.25))
+  }
+
+  const tick = () => {
+    current += (target - current) * 0.14
+    apply(current)
+    raf = requestAnimationFrame(tick)
+  }
+
+  const start = () => {
+    if (running) return
+    running = true
+    measure()
+    current = target
+    apply(current)
+    raf = requestAnimationFrame(tick)
+  }
+
+  const stop = () => {
+    if (!running) return
+    running = false
+    cancelAnimationFrame(raf)
+    reset()
+  }
+
+  const onScroll = () => measure()
+
+  const sync = () => {
+    if (stacked.matches) stop()
+    else start()
+  }
+
+  sync()
+  stacked.addEventListener('change', sync)
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll)
+
+  return () => {
+    stop()
+    revealObserver.disconnect()
+    stacked.removeEventListener('change', sync)
+    window.removeEventListener('scroll', onScroll)
+    window.removeEventListener('resize', onScroll)
+  }
+}

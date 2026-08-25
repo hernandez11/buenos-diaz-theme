@@ -1,0 +1,655 @@
+{%- liquid
+  assign contact_image = section.settings.image
+-%}
+
+<section class="bd-contact" id="contact" data-bd-contact>
+  <div class="bd-contact__stage">
+    <div class="bd-contact__photo" data-bd-contact-photo>
+      <div class="reveal-mask bd-contact__photo-reveal">
+        <div class="reveal-inner">
+          {% if contact_image != blank %}
+            <img
+              class="bd-contact__photo-image"
+              src="{{ contact_image | image_url: width: 2400 }}"
+              alt=""
+              aria-hidden="true"
+              width="{{ contact_image.width }}"
+              height="{{ contact_image.height }}"
+              loading="lazy"
+              decoding="async"
+            >
+          {% else %}
+            <img
+              class="bd-contact__photo-image"
+              src="{{ 'ContactImg.webp' | asset_url }}"
+              alt=""
+              aria-hidden="true"
+              width="2400"
+              height="1416"
+              loading="lazy"
+              decoding="async"
+            >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="bd-contact__details" data-bd-contact-details>
+      <div class="bd-contact__mask">
+        <div class="bd-contact__reveal" style="--reveal-i: 0">
+          <div class="bd-contact__column">
+            <div class="bd-contact__field">
+              <span class="bd-contact__label">{{ section.settings.email_label }}</span>
+              <span class="bd-contact__value">{{ section.settings.email }}</span>
+            </div>
+            <div class="bd-contact__field">
+              <span class="bd-contact__label">{{ section.settings.social_label }}</span>
+              <span class="bd-contact__value">{{ section.settings.social }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-contact__mask">
+        <div class="bd-contact__reveal" style="--reveal-i: 1">
+          <div class="bd-contact__column">
+            <div class="bd-contact__field" aria-hidden="true" style="visibility: hidden">
+              <span class="bd-contact__label">&nbsp;</span>
+              <span class="bd-contact__value">&nbsp;</span>
+            </div>
+            <p class="bd-contact__blurb">{{ section.settings.blurb }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bd-contact__extras" data-bd-contact-extras>
+      <div class="bd-contact__heading" data-bd-contact-heading>
+        <span class="bd-contact__heading-set bd-contact__heading-set--idle">
+          <span class="bd-contact__word">Work</span>
+          <span class="bd-contact__rule"></span>
+          <span class="bd-contact__word">With Us</span>
+        </span>
+        <span class="bd-contact__heading-set bd-contact__heading-set--posted">
+          <span class="bd-contact__word">Thank</span>
+          <span class="bd-contact__rule"></span>
+          <span class="bd-contact__word">You</span>
+        </span>
+      </div>
+
+      {% form 'contact', id: 'contact_form', class: 'bd-contact__form', data-bd-contact-form: '' %}
+        {% if form.posted_successfully? %}
+          <span hidden data-bd-contact-posted></span>
+          <p class="bd-contact__status">{{ section.settings.success_message }}</p>
+        {% else %}
+          {% if form.errors %}
+            <div class="bd-contact__note bd-contact__note--visible">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          <div class="bd-contact__steps" data-bd-contact-steps>
+            <div class="bd-contact__step" data-bd-step data-bd-rule="required">
+              <label class="bd-contact__field-label" for="contact-name">
+                Name / Company<small> (required)</small>
+              </label>
+              <input
+                class="bd-contact__input"
+                id="contact-name"
+                type="text"
+                name="contact[name]"
+                autocomplete="name"
+                maxlength="100"
+                data-bd-input
+                data-bd-max="100"
+              >
+            </div>
+
+            <div class="bd-contact__step" data-bd-step data-bd-rule="email">
+              <label class="bd-contact__field-label" for="contact-email">
+                Email<small> (required)</small>
+              </label>
+              <input
+                class="bd-contact__input"
+                id="contact-email"
+                type="email"
+                name="contact[email]"
+                autocomplete="email"
+                maxlength="100"
+                data-bd-input
+                data-bd-max="100"
+              >
+            </div>
+
+            <div class="bd-contact__step" data-bd-step data-bd-rule="phone">
+              <label class="bd-contact__field-label" for="contact-phone">
+                Phone Number<small> (optional)</small>
+              </label>
+              <input
+                class="bd-contact__input"
+                id="contact-phone"
+                type="tel"
+                name="contact[phone]"
+                autocomplete="tel"
+                inputmode="numeric"
+                data-bd-input
+              >
+            </div>
+
+            <div class="bd-contact__step" data-bd-step data-bd-rule="required">
+              <label class="bd-contact__field-label" for="contact-body">
+                Details<small> (required)</small>
+              </label>
+              <textarea
+                class="bd-contact__input bd-contact__textarea"
+                id="contact-body"
+                name="contact[body]"
+                rows="3"
+                maxlength="500"
+                data-bd-input
+                data-bd-max="500"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="bd-contact__note-slot" aria-live="polite">
+            <p class="bd-contact__note" data-bd-contact-note></p>
+          </div>
+        {% endif %}
+
+        <div class="bd-contact__footer">
+          <div class="bd-contact__dots" data-bd-contact-dots>
+            <span class="bd-contact__dot is-active"></span>
+            <span class="bd-contact__dot"></span>
+            <span class="bd-contact__dot"></span>
+            <span class="bd-contact__dot"></span>
+          </div>
+
+          {% unless form.posted_successfully? %}
+            <div class="bd-contact__actions">
+              <button
+                class="bd-contact__submit bd-contact__submit--back"
+                type="button"
+                hidden
+                data-bd-contact-back
+              >
+                Back
+              </button>
+              <button class="bd-contact__submit" type="submit" data-bd-contact-next>Next</button>
+            </div>
+          {% endunless %}
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-contact {
+    position: relative;
+    width: 100%;
+    height: 240vh;
+    background-color: var(--color-cream);
+  }
+
+  .bd-contact__stage {
+    position: sticky;
+    top: 0;
+    height: calc(100vh - var(--footer-h, 56px));
+    height: calc(100svh - var(--footer-h, 56px));
+    width: 100%;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  .bd-contact__photo {
+    position: absolute;
+    overflow: hidden;
+    will-change: width, height;
+  }
+
+  .bd-contact__photo-reveal,
+  .bd-contact__photo-reveal > .reveal-inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  .bd-contact__photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .bd-contact__details {
+    position: absolute;
+    top: 18%;
+    left: 14.5%;
+    right: 14.5%;
+    z-index: 2;
+    display: flex;
+    gap: 7cqw;
+  }
+
+  .bd-contact__mask {
+    overflow: hidden;
+    padding: 1px;
+    margin: -1px;
+  }
+
+  .bd-contact__reveal {
+    transform: translate3d(0, 120%, 0);
+    transition: transform 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 0.12s);
+    will-change: transform;
+  }
+
+  .bd-contact__details.is-revealed .bd-contact__reveal {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .bd-contact__column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6cqw;
+    max-width: max(23cqw, 40ch);
+  }
+
+  .bd-contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2cqw;
+  }
+
+  .bd-contact__label {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+
+  .bd-contact__value {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 400;
+  }
+
+  .bd-contact__blurb {
+    font-family: var(--font-sans);
+    margin: 0;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    line-height: 1.4;
+    text-transform: uppercase;
+    max-width: 40ch;
+    text-wrap: balance;
+  }
+
+  .bd-contact__extras {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .bd-contact__heading-set {
+    display: flex;
+    align-items: center;
+    gap: 1cqw;
+  }
+
+  .bd-contact__heading-set--posted {
+    display: none;
+  }
+
+  .bd-contact__heading.is-posted .bd-contact__heading-set--idle {
+    display: none;
+  }
+
+  .bd-contact__heading.is-posted .bd-contact__heading-set--posted {
+    display: flex;
+  }
+
+  .bd-contact__heading {
+    position: absolute;
+    left: 27.4%;
+    top: 56.2%;
+    display: flex;
+    align-items: center;
+    gap: 1cqw;
+    color: var(--color-cream);
+  }
+
+  .bd-contact__word {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-semibold);
+    font-size: var(--size-display-md);
+    white-space: nowrap;
+  }
+
+  .bd-contact__rule {
+    width: clamp(40px, 4.8cqw, 83px);
+    height: 1px;
+    background-color: currentColor;
+  }
+
+  .bd-contact__form {
+    position: absolute;
+    left: 27.4%;
+    right: 22%;
+    top: 60.7%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    margin: 0;
+  }
+
+  .bd-contact__step {
+    display: none;
+    flex-direction: column;
+  }
+
+  .bd-contact__step.is-active {
+    display: flex;
+  }
+
+  .bd-contact__field-label {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-title-md);
+    font-weight: 500;
+    color: var(--color-cream);
+  }
+
+  .bd-contact__field-label small {
+    font-size: 0.8em;
+    font-weight: 300;
+    text-transform: none;
+  }
+
+  .bd-contact__input {
+    width: 100%;
+    margin-top: 9vh;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--color-cream);
+    padding: 0.6cqw 0;
+    font-family: var(--font-sans);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-title-md);
+    text-transform: none;
+    color: var(--color-cream);
+    outline: none;
+  }
+
+  .bd-contact__textarea {
+    resize: none;
+    min-height: 4.5em;
+    line-height: 1.5;
+  }
+
+  .bd-contact__note-slot {
+    position: relative;
+    height: 0;
+  }
+
+  .bd-contact__note {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    position: absolute;
+    top: 1.2vh;
+    left: 0;
+    right: 0;
+    color: var(--color-danger);
+    visibility: hidden;
+  }
+
+  .bd-contact__note--visible,
+  .bd-contact__note.is-visible {
+    visibility: visible;
+  }
+
+  .bd-contact__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 39%;
+    margin-top: 9vh;
+  }
+
+  .bd-contact__dots {
+    display: flex;
+    align-items: center;
+    gap: 1.4cqw;
+  }
+
+  .bd-contact__dot {
+    width: clamp(7px, 0.58cqw, 10px);
+    height: clamp(7px, 0.58cqw, 10px);
+    border-radius: 50%;
+    background-color: var(--color-sage);
+  }
+
+  .bd-contact__dot.is-active {
+    background-color: var(--color-cream);
+  }
+
+  .bd-contact__actions {
+    display: flex;
+    align-items: center;
+    gap: 1cqw;
+  }
+
+  .bd-contact__submit {
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-title-md);
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-white);
+    background-color: var(--color-sage);
+    border: 1px solid var(--color-sage);
+    border-radius: 2.5px;
+    padding: 0.6cqw 2.2cqw;
+    cursor: pointer;
+    transition:
+      opacity 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .bd-contact__submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .bd-contact__submit--back {
+    color: var(--color-cream);
+    background-color: transparent;
+    border-color: var(--color-cream);
+  }
+
+  .bd-contact__status {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    margin-top: 1.2vh;
+    color: var(--color-cream);
+  }
+
+  @media (max-width: 900px) {
+    .bd-contact {
+      height: auto;
+    }
+
+    .bd-contact__stage {
+      position: static;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 7rem;
+    }
+
+    .bd-contact__photo {
+      position: relative;
+      right: auto !important;
+      bottom: auto !important;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 16 / 10;
+      order: 1;
+      margin-top: 14rem;
+    }
+
+    .bd-contact__details {
+      position: static;
+      flex-direction: column;
+      gap: 1.5rem;
+      order: 3;
+      padding: 10rem 14% 0 22%;
+      color: var(--color-ink);
+      transform: none !important;
+    }
+
+    .bd-contact__reveal {
+      transform: none;
+    }
+
+    .bd-contact__column {
+      max-width: none;
+      gap: 1.25rem;
+    }
+
+    .bd-contact__extras {
+      position: static;
+      order: 2;
+      pointer-events: auto;
+      opacity: 1 !important;
+    }
+
+    .bd-contact__heading {
+      position: static;
+      justify-content: flex-start;
+      padding: 7rem calc(20% - 1.5rem) 0 1.5rem;
+      color: var(--color-ink);
+    }
+
+    .bd-contact__form {
+      position: static;
+      padding: 2rem calc(20% - 1.5rem) 0 1.5rem;
+    }
+
+    .bd-contact__field-label {
+      color: var(--color-ink);
+    }
+
+    .bd-contact__input {
+      margin-top: 0.75rem;
+      border-bottom-color: var(--color-ink);
+      color: var(--color-ink);
+      padding: 0.5rem 0;
+    }
+
+    .bd-contact__dot.is-active {
+      background-color: var(--color-ink);
+    }
+
+    .bd-contact__submit--back {
+      color: var(--color-ink);
+      border-color: var(--color-ink);
+    }
+
+    .bd-contact__submit {
+      padding: 0.6rem 1.6rem;
+    }
+
+    .bd-contact__actions {
+      gap: 0.75rem;
+    }
+
+    .bd-contact__footer {
+      padding-left: 0;
+      margin-top: 2rem;
+    }
+
+    .bd-contact__status {
+      color: var(--color-ink);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Photo"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email:"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "default": "hello@buenosdiaznyc.com"
+    },
+    {
+      "type": "text",
+      "id": "social_label",
+      "label": "Socials label",
+      "default": "Socials:"
+    },
+    {
+      "type": "text",
+      "id": "social",
+      "label": "Social handle",
+      "default": "@Buenosdiaznyc"
+    },
+    {
+      "type": "textarea",
+      "id": "blurb",
+      "label": "Blurb",
+      "default": "We’d love to learn more about your event and create something special together."
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Your inquiry is on its way. We will follow up shortly."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact"
+    }
+  ]
+}
+{% endschema %}
