@@ -1,0 +1,276 @@
+{%- liquid
+  assign faq_image = section.settings.image
+-%}
+
+<section class="bd-faq">
+  <div class="bd-faq__hero" data-bd-faq-frame>
+    {% if faq_image != blank %}
+      <img
+        class="bd-faq__image"
+        src="{{ faq_image | image_url: width: 2400 }}"
+        alt=""
+        aria-hidden="true"
+        width="{{ faq_image.width }}"
+        height="{{ faq_image.height }}"
+        fetchpriority="high"
+        decoding="async"
+        data-bd-faq-image
+      >
+    {% else %}
+      <img
+        class="bd-faq__image"
+        src="{{ 'FaqBg.webp' | asset_url }}"
+        alt=""
+        aria-hidden="true"
+        width="2400"
+        height="2398"
+        fetchpriority="high"
+        decoding="async"
+        data-bd-faq-image
+      >
+    {% endif %}
+  </div>
+
+  <div class="bd-faq__grid" data-hero-cover>
+    {% for block in section.blocks %}
+      {%- liquid
+        assign number = forloop.index | prepend: '0' | slice: -2, 2
+        assign reveal_index = forloop.index0 | modulo: 4
+      -%}
+      <div class="bd-faq__item" {{ block.shopify_attributes }}>
+        <div class="reveal-mask" data-reveal-index="{{ reveal_index }}" data-reveal-duration="0.9">
+          <div class="reveal-inner">
+            <span class="bd-faq__index">({{ number }})</span>
+            <h2 class="bd-faq__question">{{ block.settings.question }}</h2>
+            <p class="bd-faq__answer">{{ block.settings.answer }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-faq {
+    width: 100%;
+    flex: 1;
+    container-type: inline-size;
+    background-color: var(--color-cream);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin-top: calc(-1 * var(--header-h, 0px));
+  }
+
+  .bd-faq__hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1728 / 850;
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
+
+  .bd-faq__image {
+    position: absolute;
+    top: -13%;
+    left: -19.14%;
+    width: 119.14%;
+    height: 150%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center 42%;
+    display: block;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .bd-faq__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 2.2cqw;
+    row-gap: 6.9cqw;
+    padding: 9.7cqw 13.31cqw 8cqw;
+  }
+
+  .bd-faq__item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .bd-faq__index {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-size: 1.107cqw;
+    font-weight: 300;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .bd-faq__question {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin-top: 0.5cqw;
+    min-height: 3.9cqw;
+  }
+
+  .bd-faq__answer {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--size-body);
+    font-weight: 300;
+    color: var(--color-ink);
+    margin-top: 1.2cqw;
+  }
+
+  @media (max-width: 1024px) {
+    .bd-faq__grid {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 3.5rem;
+      padding: 4rem 1.5rem 5rem;
+    }
+
+    .bd-faq__index {
+      font-size: 0.9em;
+    }
+
+    .bd-faq__question {
+      margin-top: 0.4rem;
+      min-height: 0;
+    }
+
+    .bd-faq__answer {
+      margin-top: 0.6rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .bd-faq__hero {
+      aspect-ratio: 4 / 3;
+    }
+
+    .bd-faq__image {
+      width: 170%;
+      left: -27.3%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .bd-faq__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.25rem;
+      row-gap: 2.75rem;
+      padding: 3rem 5% 7rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Header image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT IS BUENOS DÍAZ?",
+            "answer": "We are a mobile espresso bar based in New York City. We bring specialty coffee rooted in Mexican tradition to events, popups, and private gatherings across the city."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT MAKES OUR COFFEE DIFFERENT?",
+            "answer": "Our coffee comes from Chiapas, Mexico, where our family has farmed for generations. We pair it with syrups we make in house, built on the authentic flavors we grew up with, so every drink tastes like where it came from."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "WHERE CAN YOU FIND US?",
+            "answer": "We move around. Check the events page for what is coming up, or follow us on Instagram for the latest!"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "DO WE CATER PRIVATE EVENTS?",
+            "answer": "Yes. We bring the bar, the team, and everything needed to serve your guests."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT EVENTS DO WE SERVE?",
+            "answer": "Weddings, brand launches, office mornings, markets, popups, and private parties. If it calls for good coffee, we are interested."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT'S INCLUDED WHEN YOU BOOK WITH US?",
+            "answer": "Our full bar setup, baristas, equipment, cups, and a menu built for your event. We handle setup and breakdown."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "CAN WE CUSTOMIZE THE MENU FOR YOUR EVENT?",
+            "answer": "Yes. We can build around a theme, a flavor, or a product. Signature drinks made for your event are part of what we do."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "DO WE OFFER NON-COFFEE OPTIONS?",
+            "answer": "Yes. Along with our specialty coffee, we offer our signature homemade horchata and Guava Roja, a hibiscus and guava alternative."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "HOW DO YOU BOOK US?",
+            "answer": "Email us at hello@buenosdiaznyc.com with details of your event. We will follow up with availability, specifics, and a quote."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

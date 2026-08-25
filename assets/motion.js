@@ -680,3 +680,10 @@ export function initContactScroll() {
     window.removeEventListener('resize', onScroll)
   }
 }
+
+export function initFaq() {
+  const frame = document.querySelector('[data-bd-faq-frame]')
+  const image = document.querySelector('[data-bd-faq-image]')
+  if (!frame || !image) return () => {}
+  return initParallax(frame, image, { speed: -0.42 })
+}
