@@ -39,12 +39,28 @@ Local files are the source of truth during the build. Do not edit theme code in 
 | `snippets/fonts.liquid` | Inter 300, 400, 500, 600 |
 | `layout/theme.liquid` | `App.tsx` shell, boots the motion modules |
 
-## Still to port
+## Everything ported
 
-- Home: menu section, contact section
-- FAQ page
-- Events index carousel and event detail template
-- Product, collection, and cart pages, which are new work with no React equivalent
+| Theme file | Came from |
+|---|---|
+| `sections/menu.liquid` | `MenuDisplay.tsx`, drinks are editable blocks |
+| `sections/contact.liquid` | `ContactSection.tsx`, form posts to Shopify |
+| `sections/faq.liquid` | `FaqPage.tsx`, questions are editable blocks |
+| `sections/events.liquid` | `EventsGallery.tsx`, driven by metaobjects |
+| `sections/event-detail.liquid` | `EventDetail.tsx`, metaobject template |
+| `sections/404.liquid` | `NotFound.tsx` |
+| `assets/events.js` | carousel, reveals, and video handling |
+| `assets/shop.css` | new, styles product, collection, and cart |
+| `sections/product.liquid`, `collection.liquid`, `collections.liquid`, `cart.liquid` | new, no React equivalent |
+
+## Pages created in the store
+
+| Page | Handle | Template |
+|---|---|---|
+| FAQ | `faq` | `page.faq` |
+| Events | `events` | `page.events` |
+
+Event detail pages come from the metaobject and render through `templates/metaobject/event.json`.
 
 ## Reveal markup
 
@@ -80,6 +96,14 @@ Created in the store as type `event`, id `gid://shopify/MetaobjectDefinition/225
 Web pages are enabled with the URL handle `events`, so each published event gets its own URL. Redirects are created automatically if a handle changes.
 
 Add events under **Content → Metaobjects → Event** in the admin. No code required.
+
+## Behavior differences worth knowing
+
+**Contact form.** Shopify's contact form does a real page POST, so after Submit the page reloads and comes back showing THANK YOU. The React version swapped inline with no reload. Everything looks the same, there is just a page load in the middle.
+
+**Event detail navigation.** In React the events index and a detail page shared one mounted carousel, so it visually collapsed in place. On Shopify those are two separate pages, so the detail page renders its own centered poster image at the top to reproduce the same end state. The 350ms fade before navigating is preserved.
+
+**Event ordering.** Events sort by date, newest first, computed in Liquid. The carousel opens centered on the most recent event that has already happened. Future dated events show COMING SOON and are not clickable, the same rule as before.
 
 ## Does not transfer
 
