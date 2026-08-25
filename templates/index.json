@@ -10,6 +10,91 @@
     },
     "menu": {
       "type": "menu",
+      "blocks": {
+        "entry_1": {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Fresa Horchata Latte",
+            "description": "Double espresso with strawberry puree + creamy oatmilk horchata spiced with warm cinnamon."
+          }
+        },
+        "entry_2": {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Cajeta Cortado",
+            "description": "Double espresso with cajeta, a rich Mexican caramel made from slow-cooked goat’s milk."
+          }
+        },
+        "entry_3": {
+          "type": "entry",
+          "settings": {
+            "column": "1",
+            "name": "Guava Cream Top",
+            "description": "Double espresso latte layered beneath a silky guava and strawberry cold foam."
+          }
+        },
+        "pair_4": {
+          "type": "pair",
+          "settings": {
+            "column": "2",
+            "left": "Espresso",
+            "right": "Flat White"
+          }
+        },
+        "pair_5": {
+          "type": "pair",
+          "settings": {
+            "column": "2",
+            "left": "Latte",
+            "right": "American"
+          }
+        },
+        "pair_6": {
+          "type": "pair",
+          "settings": {
+            "column": "2",
+            "left": "Cortado",
+            "right": "Machiato"
+          }
+        },
+        "pair_7": {
+          "type": "pair",
+          "settings": {
+            "column": "2",
+            "left": "Cappucino",
+            "right": ""
+          }
+        },
+        "entry_8": {
+          "type": "entry",
+          "settings": {
+            "column": "3",
+            "name": "Guava Roja",
+            "description": "Tropical guava layered with the vibrant tang of hibiscus and subtle warming spices. Inspired by the refreshing jamaica agua fresca found across Mexico."
+          }
+        },
+        "entry_9": {
+          "type": "entry",
+          "settings": {
+            "column": "3",
+            "name": "Horchata",
+            "description": "A traditional Mexican drink made from rice, cinnamon, and vanilla, blended into a smooth, creamy milk based agua fresca."
+          }
+        }
+      },
+      "block_order": [
+        "entry_1",
+        "entry_2",
+        "entry_3",
+        "pair_4",
+        "pair_5",
+        "pair_6",
+        "pair_7",
+        "entry_8",
+        "entry_9"
+      ],
       "settings": {}
     },
     "contact": {

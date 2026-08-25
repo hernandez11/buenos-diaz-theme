@@ -2,6 +2,82 @@
   "sections": {
     "faq": {
       "type": "faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT IS BUENOS DÍAZ?",
+            "answer": "We are a mobile espresso bar based in New York City. We bring specialty coffee rooted in Mexican tradition to events, popups, and private gatherings across the city."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT MAKES OUR COFFEE DIFFERENT?",
+            "answer": "Our coffee comes from Chiapas, Mexico, where our family has farmed for generations. We pair it with syrups we make in house, built on the authentic flavors we grew up with, so every drink tastes like where it came from."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "WHERE CAN YOU FIND US?",
+            "answer": "We move around. Check the events page for what is coming up, or follow us on Instagram for the latest!"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "DO WE CATER PRIVATE EVENTS?",
+            "answer": "Yes. We bring the bar, the team, and everything needed to serve your guests."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT EVENTS DO WE SERVE?",
+            "answer": "Weddings, brand launches, office mornings, markets, popups, and private parties. If it calls for good coffee, we are interested."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "WHAT'S INCLUDED WHEN YOU BOOK WITH US?",
+            "answer": "Our full bar setup, baristas, equipment, cups, and a menu built for your event. We handle setup and breakdown."
+          }
+        },
+        "faq_7": {
+          "type": "faq",
+          "settings": {
+            "question": "CAN WE CUSTOMIZE THE MENU FOR YOUR EVENT?",
+            "answer": "Yes. We can build around a theme, a flavor, or a product. Signature drinks made for your event are part of what we do."
+          }
+        },
+        "faq_8": {
+          "type": "faq",
+          "settings": {
+            "question": "DO WE OFFER NON-COFFEE OPTIONS?",
+            "answer": "Yes. Along with our specialty coffee, we offer our signature homemade horchata and Guava Roja, a hibiscus and guava alternative."
+          }
+        },
+        "faq_9": {
+          "type": "faq",
+          "settings": {
+            "question": "HOW DO YOU BOOK US?",
+            "answer": "Email us at hello@buenosdiaznyc.com with details of your event. We will follow up with availability, specifics, and a quote."
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8",
+        "faq_9"
+      ],
       "settings": {}
     }
   },
