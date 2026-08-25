@@ -1,0 +1,78 @@
+<section class="bd-info" data-hero-cover>
+  <div class="bd-info__panel">
+    <div class="bd-info__content">
+      <p class="secondaryTitle">{{ section.settings.heading }}</p>
+      <p class="primaryTextSmall bd-info__body">{{ section.settings.body }}</p>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-info {
+    position: relative;
+    z-index: 1;
+    background-color: var(--color-cream);
+  }
+
+  .bd-info__panel {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1.5rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .bd-info__content {
+    width: 75%;
+    max-width: 40em;
+    text-align: center;
+  }
+
+  .bd-info__body {
+    white-space: pre-line;
+  }
+
+  @media (max-width: 767px) {
+    .bd-info__panel {
+      padding: 4rem 20%;
+    }
+
+    .bd-info__content {
+      width: 100%;
+    }
+
+    .bd-info__content p:first-child {
+      margin-bottom: 1em;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Info panel",
+  "settings": [
+    {
+      "type": "html",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<strong>BUENOS DÍAZ</strong> | NYC"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "default": "I come from a family of coffee farmers in Chiapas, Mexico, where coffee is more than just a morning pick-me-up—it’s a way of life. In Chiapas, coffee puts food on tables and is grown with care, patience, and pride. Families there savor the fruits of their labor every day, after growing, harvesting, and roasting their own beans. As the largest coffee-producing region in Mexico, Chiapas is steeped in a tradition of quality and passion that has shaped the way coffee is enjoyed and celebrated.\n\nMy family has carried on this tradition for generations, cultivating and harvesting coffee with the same care and dedication. Growing up surrounded by these practices instilled in me a deep respect for the craft and a desire to share its warmth, richness, and cultural significance.\n\nAt Buenos Díaz, we specialize in specialty coffee and crafting experiences that go beyond the cup. From thoughtfully sourced beans to homemade syrups and flavors grounded in Mexican traditions, every drink tells a story—one of care, culture, and the joy of sharing coffee with others."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Info panel"
+    }
+  ]
+}
+{% endschema %}

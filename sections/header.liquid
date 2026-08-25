@@ -1,77 +1,201 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+<header class="bd-header" data-bd-header>
+  <a class="bd-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+    <span class="bd-header__logo-slot" data-logo-slot="header"></span>
+  </a>
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
-
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
-
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
+  <button
+    class="bd-header__toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="primary-navigation"
+    data-bd-menu-toggle
+  >
+    <span data-bd-menu-label>Menu</span>
+  </button>
 </header>
 
+<div class="bd-backdrop" data-bd-backdrop></div>
+
+<div class="bd-dropdown" id="primary-navigation" data-bd-dropdown>
+  <a class="bd-dropdown__link" href="{{ routes.root_url }}">Home</a>
+  <a class="bd-dropdown__link" href="/pages/events">Events</a>
+  <a class="bd-dropdown__link" href="/pages/faq">FAQ</a>
+  <a class="bd-dropdown__link" href="{{ routes.root_url }}#contact">Contact</a>
+</div>
+
+<div class="bd-scroll-logo" data-bd-scroll-logo aria-hidden="true">
+  <img
+    class="bd-scroll-logo__layer bd-scroll-logo__layer--light"
+    src="{{ 'PrimaryLogo.png' | asset_url }}"
+    alt=""
+    width="3956"
+    height="1218"
+    data-bd-logo-light
+  >
+  <img
+    class="bd-scroll-logo__layer"
+    src="{{ 'PrimaryLogo.png' | asset_url }}"
+    alt=""
+    width="3956"
+    height="1218"
+    style="opacity: 0"
+    data-bd-logo-dark
+  >
+</div>
+
 {% stylesheet %}
-  header {
-    height: 5rem;
+  .bd-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    transform: translateY(0);
+    transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    box-sizing: border-box;
+    container-type: inline-size;
+    background-color: transparent;
+    height: var(--header-h, 88px);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 4.7cqw;
   }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
+
+  .bd-header.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  .bd-header__logo {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    text-decoration: none;
   }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+
+  .bd-header__logo-slot {
+    display: block;
+    width: clamp(120px, 11cqw, 190px);
+    aspect-ratio: 3.24795;
   }
-  header svg {
-    width: 2rem;
+
+  .bd-header__toggle {
+    display: block;
+    flex: 0 0 auto;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: clamp(11px, 0.868cqw, 15px);
+    line-height: 1.3;
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--nav-color, var(--color-ink));
+    transition: color 0.3s ease;
   }
-  header .header__menu,
-  header .header__icons {
+
+  .bd-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: block;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .bd-backdrop.is-open {
+    pointer-events: auto;
+  }
+
+  .bd-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 90;
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-end;
+    box-sizing: border-box;
+    padding: calc(var(--header-h, 88px) + 1.5rem) 4.7vw 1.75rem;
+    background-color: rgba(255, 253, 250, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 0.8px solid rgba(30, 30, 30, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .bd-dropdown.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .bd-dropdown__link {
+    font-family: var(--font-sans);
+    margin: 0;
+    text-transform: uppercase;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-regular);
+    font-size: var(--size-title-md);
+    color: var(--nav-color, var(--color-ink));
+    text-decoration: none;
+    padding-bottom: 0.9rem;
+    transition: color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bd-dropdown__link:last-child {
+    padding-bottom: 0;
+  }
+
+  .bd-scroll-logo {
+    position: fixed;
+    z-index: 101;
+    pointer-events: none;
+    will-change: transform, width;
+    opacity: 0;
+  }
+
+  .bd-scroll-logo__layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .bd-scroll-logo__layer--light {
+    filter: brightness(0) invert(1);
+  }
+
+  @media (max-width: 767px) {
+    .bd-header {
+      padding: 0 1.5rem;
+    }
+
+    .bd-header__toggle {
+      font-size: 0.8em;
+    }
+
+    .bd-dropdown {
+      padding: calc(var(--header-h, 64px) + 1.5rem) 1.5rem 1.75rem;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.header",
-  "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
-    }
-  ]
+  "name": "Header",
+  "settings": []
 }
 {% endschema %}

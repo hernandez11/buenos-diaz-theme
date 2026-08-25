@@ -1,56 +1,114 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+<footer class="bd-footer">
+  <span class="bd-footer__text">{{ section.settings.tagline }}</span>
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
-
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
+  <div class="bd-footer__social">
+    {% if section.settings.instagram_url != blank %}
+      <a
+        class="bd-footer__link"
+        href="{{ section.settings.instagram_url }}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {{ section.settings.instagram_label }}
+      </a>
     {% endif %}
   </div>
+
+  <span class="bd-footer__text bd-footer__text--end">{{ section.settings.copyright }}</span>
 </footer>
 
 {% stylesheet %}
-  footer {
+  .bd-footer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    box-sizing: border-box;
+    container-type: inline-size;
+    background-color: var(--color-cream);
+    min-height: var(--footer-h, 56px);
     display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2cqw;
+    padding: 0.75cqw 4cqw;
   }
-  footer a {
+
+  .bd-footer__text {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: clamp(9px, 0.868cqw, 15px);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-black);
+    white-space: nowrap;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .bd-footer__text--end {
+    text-align: right;
+  }
+
+  .bd-footer__social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9cqw;
+    flex: 0 0 auto;
+  }
+
+  .bd-footer__link {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: clamp(9px, 0.868cqw, 15px);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-black);
     text-decoration: none;
-    color: var(--color-foreground);
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
   }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+
+  .bd-footer__link:hover {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 767px) {
+    .bd-footer {
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+
+    .bd-footer__social {
+      gap: 0.6rem;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Footer",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Mobile Espresso Bar | NYC"
     },
     {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
+      "type": "text",
+      "id": "instagram_label",
+      "label": "Instagram label",
+      "default": "INSTAGRAM"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright",
+      "default": "@ Buenos Díaz Coffee, 2026"
     }
   ]
 }

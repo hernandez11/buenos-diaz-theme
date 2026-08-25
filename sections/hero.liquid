@@ -1,0 +1,258 @@
+{%- liquid
+  assign hero_image = section.settings.image
+-%}
+
+<section class="bd-hero" data-bd-hero>
+  {% if hero_image != blank %}
+    <img
+      class="bd-hero__image"
+      src="{{ hero_image | image_url: width: 2400 }}"
+      alt="{{ section.settings.image_alt | escape }}"
+      width="{{ hero_image.width }}"
+      height="{{ hero_image.height }}"
+      fetchpriority="high"
+      decoding="async"
+      data-bd-hero-image
+    >
+  {% else %}
+    <img
+      class="bd-hero__image"
+      src="{{ 'HeroBg.webp' | asset_url }}"
+      alt="{{ section.settings.image_alt | escape }}"
+      width="2400"
+      height="2398"
+      fetchpriority="high"
+      decoding="async"
+      data-bd-hero-image
+    >
+  {% endif %}
+
+  <div class="bd-hero__overlay"></div>
+
+  <div class="bd-hero__text" data-bd-hero-text>
+    <span
+      class="bd-hero__label bd-hero__label--lg"
+      style="left: 16.84%; top: 27.9%; transform: translateY(-50%) translateX(-100%); text-align: right;"
+    >
+      <span class="reveal-mask" data-reveal-delay="0" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.word_one }}</span>
+      </span>
+    </span>
+
+    <span class="bd-hero__divider"></span>
+
+    <span
+      class="bd-hero__label bd-hero__label--lg"
+      style="left: 39.53%; top: 27.9%; transform: translateY(-50%); text-align: left;"
+    >
+      <span class="reveal-mask" data-reveal-delay="0" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.word_two }}</span>
+      </span>
+    </span>
+
+    <span
+      class="bd-hero__label"
+      style="left: 78.41%; top: 69.8%; transform: translateY(-50%); text-align: left;"
+    >
+      <span class="reveal-mask" data-reveal-delay="0.5" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.pillar_right }}</span>
+      </span>
+    </span>
+
+    <span
+      class="bd-hero__label"
+      style="left: 23.72%; top: 69.8%; transform: translateY(-50%) translateX(-100%); text-align: right;"
+    >
+      <span class="reveal-mask" data-reveal-delay="0.5" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.pillar_left }}</span>
+      </span>
+    </span>
+
+    <span
+      class="bd-hero__label"
+      style="left: 50%; top: 53.3%; transform: translateY(-50%) translateX(-50%); text-align: center;"
+    >
+      <span class="reveal-mask" data-reveal-delay="0.5" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.pillar_center }}</span>
+      </span>
+    </span>
+
+    <span
+      class="bd-hero__label"
+      style="left: 50%; top: 91.4%; transform: translateY(-50%) translateX(-50%); text-align: center;"
+    >
+      <span class="reveal-mask" data-reveal-delay="1" data-reveal-duration="0.9">
+        <span class="reveal-inner">{{ section.settings.tagline }}</span>
+      </span>
+    </span>
+
+    <div class="bd-hero__mobile">
+      <p class="secondaryTitle">{{ section.settings.mobile_heading }}</p>
+      <p class="primaryTextSmall">{{ section.settings.tagline }}</p>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-hero {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    margin-top: calc(-1 * var(--header-h, 0px));
+    flex: 0 0 auto;
+    overflow: hidden;
+    container-type: inline-size;
+    background-color: var(--color-ink);
+  }
+
+  .bd-hero__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 123%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    z-index: 0;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .bd-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .bd-hero__text {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .bd-hero__label {
+    position: absolute;
+    width: auto;
+    z-index: 2;
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.3;
+    letter-spacing: var(--tracking-tight);
+    font-weight: 300;
+    font-size: 0.8em;
+  }
+
+  .bd-hero__label--lg {
+    font-weight: 500;
+  }
+
+  .bd-hero__divider {
+    position: absolute;
+    left: 18.75%;
+    top: 27.9%;
+    transform: translateY(-50%);
+    width: 18.87%;
+    height: 1px;
+    background-color: var(--color-white);
+    z-index: 2;
+  }
+
+  .bd-hero__mobile {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .bd-hero__label,
+    .bd-hero__divider {
+      display: none;
+    }
+
+    .bd-hero__mobile {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      padding: 0 2rem;
+      text-align: center;
+      color: var(--color-white);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Buenos Díaz"
+    },
+    {
+      "type": "text",
+      "id": "word_one",
+      "label": "Headline word one",
+      "default": "Made"
+    },
+    {
+      "type": "text",
+      "id": "word_two",
+      "label": "Headline word two",
+      "default": "For"
+    },
+    {
+      "type": "text",
+      "id": "pillar_left",
+      "label": "Left pillar",
+      "default": "Heritage"
+    },
+    {
+      "type": "text",
+      "id": "pillar_center",
+      "label": "Center pillar",
+      "default": "Community"
+    },
+    {
+      "type": "text",
+      "id": "pillar_right",
+      "label": "Right pillar",
+      "default": "New York City"
+    },
+    {
+      "type": "html",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Mexican heritage, poured in New York.<br>Specialty coffee with a purpose."
+    },
+    {
+      "type": "text",
+      "id": "mobile_heading",
+      "label": "Mobile heading",
+      "default": "MADE FOR COMMUNITY"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}
