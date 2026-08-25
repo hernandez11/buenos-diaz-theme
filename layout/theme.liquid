@@ -17,7 +17,7 @@
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body class="template-{{ request.page_type }}">
     <div class="bd-shell">
       {% sections 'header-group' %}
 

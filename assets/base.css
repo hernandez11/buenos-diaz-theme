@@ -95,6 +95,13 @@ body {
   padding-top: var(--header-h, 0px);
 }
 
+.template-404 .bd-main > .shopify-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
 html,
 body,
 *,
