@@ -1,0 +1,36 @@
+{%- liquid
+  assign is_video = false
+  if file.media_type == 'video' or file.sources
+    assign is_video = true
+  endif
+-%}
+
+{% if is_video %}
+  <video
+    class="bd-detail__clip"
+    muted
+    loop
+    playsinline
+    autoplay
+    preload="auto"
+    tabindex="-1"
+    disablepictureinpicture
+    controlslist="nodownload noplaybackrate noremoteplayback"
+    aria-hidden="true"
+    data-bd-clip
+  >
+    {% for source in file.sources %}
+      <source src="{{ source.url }}" type="{{ source.mime_type }}">
+    {% endfor %}
+  </video>
+{% else %}
+  <img
+    class="bd-detail__photo"
+    src="{{ file | image_url: width: 1600 }}"
+    alt=""
+    width="1600"
+    height="1060"
+    loading="lazy"
+    decoding="async"
+  >
+{% endif %}

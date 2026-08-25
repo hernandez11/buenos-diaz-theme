@@ -1,0 +1,550 @@
+{%- liquid
+  assign raw_events = shop.metaobjects.event.values
+  assign now_epoch = 'now' | date: '%s' | plus: 0
+
+  assign sort_keys = ''
+  for item in raw_events
+    assign epoch = item.date.value | date: '%s'
+    assign padded = epoch | prepend: '0000000000' | slice: -10, 10
+    assign sort_keys = sort_keys | append: padded | append: ':' | append: forloop.index0 | append: ','
+  endfor
+
+  assign ordered = sort_keys | split: ',' | sort | reverse
+
+  assign order_list = ''
+  for key in ordered
+    assign parts = key | split: ':'
+    assign order_list = order_list | append: parts[1] | append: ','
+  endfor
+  assign order_list = order_list | split: ','
+  assign event_count = order_list.size
+
+  assign default_index = 0
+  assign found_past = false
+  for position in order_list
+    assign idx = position | plus: 0
+    assign epoch = raw_events[idx].date.value | date: '%s' | plus: 0
+    if epoch <= now_epoch and found_past == false
+      assign default_index = forloop.index0
+      assign found_past = true
+    endif
+  endfor
+
+  assign buffer_copies = 7
+  assign center_copy = 3
+  assign center_virtual = center_copy | times: event_count | plus: default_index
+-%}
+
+{% if event_count == 0 %}
+  <section class="bd-events-empty">
+    <p class="secondaryTitle">No events yet.</p>
+  </section>
+{% else %}
+  <section
+    class="bd-events"
+    data-bd-events
+    data-bd-count="{{ event_count }}"
+    data-bd-copies="{{ buffer_copies }}"
+    data-bd-center="{{ center_virtual }}"
+  >
+    <div class="bd-events__pin-spacer" data-bd-events-spacer></div>
+
+    <div class="bd-events__stage" data-bd-events-stage>
+      <div class="bd-events__center" data-bd-events-center>
+        <div class="bd-events__above" data-bd-events-above hidden>
+          <div class="reveal-mask" data-reveal-delay="0" data-reveal-duration="0.9">
+            <div class="reveal-inner">
+              <span class="bd-events__soon">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bd-events__viewport">
+          <div class="bd-events__track" data-bd-events-track>
+            {% for copy in (1..buffer_copies) %}
+              {% for position in order_list %}
+                {%- liquid
+                  assign idx = position | plus: 0
+                  assign item = raw_events[idx]
+                  assign epoch = item.date.value | date: '%s' | plus: 0
+                  assign upcoming = false
+                  if epoch > now_epoch
+                    assign upcoming = true
+                  endif
+                  assign v = forloop.parentloop.index0 | times: event_count | plus: forloop.index0
+                -%}
+                <div
+                  class="bd-events__tile"
+                  data-bd-tile
+                  data-bd-v="{{ v }}"
+                  data-bd-url="{{ item.system.url }}"
+                  data-bd-locked="{% if upcoming %}true{% else %}false{% endif %}"
+                >
+                  <div class="bd-events__tile-reveal">
+                    {% if item.poster.value != blank %}
+                      <img
+                        class="bd-events__tile-image"
+                        src="{{ item.poster.value | image_url: width: 1200 }}"
+                        alt="{{ item.title.value | escape }}"
+                        width="1200"
+                        height="1500"
+                        decoding="async"
+                        draggable="false"
+                      >
+                    {% endif %}
+                    <div class="bd-events__tile-overlay" data-bd-overlay></div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-events__below" data-bd-events-below>
+        <div class="bd-events__hint" data-bd-events-hint>
+          {% for position in order_list %}
+            <span class="bd-events__dot"></span>
+          {% endfor %}
+        </div>
+
+        <div class="bd-events__info" data-bd-events-info>
+          <div class="reveal-mask" data-reveal-delay="0" data-reveal-duration="0.9">
+            <div class="reveal-inner">
+              <span class="bd-events__date primaryTextSmall" data-bd-events-date></span>
+            </div>
+          </div>
+          <div class="reveal-mask" data-reveal-delay="0.08" data-reveal-duration="0.9">
+            <div class="reveal-inner">
+              <h3 class="bd-events__title" data-bd-events-title></h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bd-events__mobile">
+      <div class="bd-events__cards">
+        {% for position in order_list %}
+          {%- liquid
+            assign idx = position | plus: 0
+            assign item = raw_events[idx]
+            assign epoch = item.date.value | date: '%s' | plus: 0
+            assign upcoming = false
+            if epoch > now_epoch
+              assign upcoming = true
+            endif
+            assign number = forloop.index | prepend: '0' | slice: -2, 2
+            assign reveal_index = forloop.index0 | modulo: 2
+          -%}
+          <a
+            class="bd-events__card"
+            href="{% if upcoming %}#{% else %}{{ item.system.url }}{% endif %}"
+            {% if upcoming %}
+              aria-disabled="true" data-bd-card-locked
+            {% endif %}
+          >
+            <div class="reveal-mask" data-reveal-index="{{ reveal_index }}" data-reveal-duration="0.9">
+              <div class="reveal-inner">
+                <span class="bd-events__card-index">
+                  00
+                  <span class="bd-events__index-dot"></span>
+                  {{ number }}
+                </span>
+
+                <div class="bd-events__card-frame">
+                  {% if item.poster.value != blank %}
+                    <img
+                      class="bd-events__card-image"
+                      src="{{ item.poster.value | image_url: width: 900 }}"
+                      alt="{{ item.title.value | escape }}"
+                      width="900"
+                      height="1125"
+                      decoding="async"
+                    >
+                  {% endif %}
+                </div>
+
+                <div class="bd-events__card-meta">
+                  <span>{{ item.date.value | date: '%m.%d' }}</span>
+                  {% if upcoming %}
+                    <span class="bd-events__card-soon">Coming Soon</span>
+                  {% endif %}
+                </div>
+
+                <h3 class="bd-events__card-title">{{ item.title.value }}</h3>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script type="application/json" data-bd-events-data>
+      [
+        {%- for position in order_list -%}
+          {%- liquid
+            assign idx = position | plus: 0
+            assign item = raw_events[idx]
+            assign epoch = item.date.value | date: '%s' | plus: 0
+            assign upcoming = false
+            if epoch > now_epoch
+              assign upcoming = true
+            endif
+          -%}
+          {
+            "title": {{ item.title.value | json }},
+            "date": {{ item.date.value | date: '%m.%d' | json }},
+            "url": {{ item.system.url | json }},
+            "upcoming": {{ upcoming | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    </script>
+  </section>
+{% endif %}
+
+{% stylesheet %}
+  .bd-events-empty {
+    padding: 8rem 1.5rem;
+    text-align: center;
+  }
+
+  .bd-events {
+    width: 100%;
+    container-type: inline-size;
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bd-events__pin-spacer {
+    display: none;
+    width: 100%;
+    flex: 0 0 auto;
+    height: calc(100vh - var(--header-h, 88px));
+    height: calc(100svh - var(--header-h, 88px));
+  }
+
+  .bd-events.is-pinned .bd-events__pin-spacer {
+    display: block;
+  }
+
+  .bd-events__stage {
+    width: 100%;
+    container-type: inline-size;
+    position: relative;
+    flex: 1 0 auto;
+    min-height: calc(min(clamp(400px, 63.4cqw, 570px), 66svh) + clamp(220px, 14cqw, 280px));
+  }
+
+  .bd-events.is-pinned .bd-events__stage {
+    position: fixed;
+    top: var(--header-h, 88px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100vh - var(--header-h, 88px));
+    height: calc(100svh - var(--header-h, 88px));
+    min-height: 0;
+    z-index: 1;
+  }
+
+  .bd-events__center {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+  }
+
+  .bd-events__above {
+    position: absolute;
+    bottom: calc(50% + min(clamp(400px, 63.4cqw, 570px), 66svh) / 2);
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 25cqw 0.8cqw;
+    box-sizing: border-box;
+    text-align: left;
+    opacity: 1;
+    transition: opacity 350ms ease;
+  }
+
+  .bd-events__above[hidden] {
+    display: none;
+  }
+
+  .bd-events__soon {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 0.65em;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .bd-events__viewport {
+    position: relative;
+    width: 100%;
+    height: min(clamp(400px, 63.4cqw, 570px), 66svh);
+    overflow: hidden;
+    contain: layout paint;
+  }
+
+  .bd-events__track {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
+    transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bd-events__tile {
+    position: relative;
+    box-sizing: border-box;
+    flex: 0 0 6.5cqw;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    border: 0.5px solid var(--color-white);
+    cursor: pointer;
+    opacity: 1;
+    contain: paint;
+    transition:
+      flex-basis 600ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 350ms ease;
+  }
+
+  .bd-events__tile.is-muted {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bd-events__tile.is-locked {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .bd-events__tile-reveal {
+    position: absolute;
+    inset: 0;
+    transform: translate3d(0, 120%, 0);
+    will-change: transform;
+    animation: bd-tile-enter 1400ms cubic-bezier(0.19, 1, 0.22, 1) var(--enter-delay, 0ms) both;
+  }
+
+  @keyframes bd-tile-enter {
+    from {
+      transform: translate3d(0, 120%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .bd-events__tile-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 0.5s ease;
+  }
+
+  .bd-events__tile:hover .bd-events__tile-image {
+    transform: scale(1.06);
+  }
+
+  .bd-events__tile-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgb(30, 30, 30);
+    opacity: 0.75;
+    pointer-events: none;
+    transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bd-events__tile:hover .bd-events__tile-overlay {
+    opacity: 0;
+  }
+
+  .bd-events__below {
+    position: absolute;
+    top: calc(50% + min(clamp(400px, 63.4cqw, 570px), 66svh) / 2);
+    left: 0;
+    width: 100%;
+  }
+
+  .bd-events__hint {
+    display: none;
+  }
+
+  .bd-events__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-ink);
+    opacity: 0.25;
+  }
+
+  .bd-events__dot.is-active {
+    opacity: 1;
+  }
+
+  .bd-events__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3cqw;
+    padding: 0.8cqw 25cqw 0;
+    text-align: left;
+    opacity: 1;
+    transition: opacity 350ms ease;
+  }
+
+  .bd-events.is-leaving .bd-events__info,
+  .bd-events.is-leaving .bd-events__above,
+  .bd-events.is-leaving .bd-events__hint {
+    opacity: 0;
+  }
+
+  .bd-events__title {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-regular);
+    font-size: var(--size-title-md);
+    color: var(--color-ink);
+  }
+
+  .bd-events__date {
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .bd-events__mobile {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .bd-events__stage,
+    .bd-events__pin-spacer {
+      display: none !important;
+    }
+
+    .bd-events__mobile {
+      display: block;
+      width: 100%;
+      flex: 1 0 auto;
+      container-type: inline-size;
+      padding: 8rem 1.5rem 7rem;
+      box-sizing: border-box;
+    }
+
+    .bd-events__cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1rem;
+      row-gap: 2.25rem;
+    }
+
+    .bd-events__card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bd-events__card-index {
+      font-family: var(--font-sans);
+      margin: 0;
+      line-height: var(--leading-snug);
+      letter-spacing: var(--tracking-tight);
+      font-size: var(--size-body);
+      font-weight: 300;
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .bd-events__index-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--color-sage);
+    }
+
+    .bd-events__card-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+    }
+
+    .bd-events__card-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .bd-events__card-meta {
+      font-family: var(--font-sans);
+      margin: 0;
+      line-height: var(--leading-snug);
+      letter-spacing: var(--tracking-tight);
+      font-size: var(--size-body);
+      font-weight: 300;
+      color: var(--color-ink);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-top: 0.6rem;
+    }
+
+    .bd-events__card-soon {
+      color: var(--color-accent);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .bd-events__card-title {
+      font-family: var(--font-sans);
+      margin: 0;
+      line-height: var(--leading-snug);
+      letter-spacing: var(--tracking-tight);
+      font-size: var(--size-body);
+      font-weight: 500;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      padding-top: 0.15rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Events",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Events"
+    }
+  ]
+}
+{% endschema %}

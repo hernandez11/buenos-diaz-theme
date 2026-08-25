@@ -42,6 +42,12 @@
         initContactScroll,
         initFaq,
       } from '{{ 'motion.js' | asset_url }}';
+      import {
+        initEvents,
+        initEventCards,
+        initDetailFrames,
+        initClips,
+      } from '{{ 'events.js' | asset_url }}';
 
       const boot = () => {
         if (window.Lenis) initSmoothScroll(window.Lenis);
@@ -54,6 +60,10 @@
         initContactScroll();
         initContactForm();
         initFaq();
+        initEvents();
+        initEventCards();
+        initDetailFrames();
+        initClips();
         initReveals();
       };
 
