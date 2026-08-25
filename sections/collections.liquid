@@ -1,83 +1,55 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+<section class="bd-shop">
+  <div class="bd-shop__head">
+    <span class="bd-shop__eyebrow">{{ section.settings.eyebrow }}</span>
+    <h1 class="bd-shop__heading">{{ section.settings.heading }}</h1>
+  </div>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+  <div class="bd-shop__grid">
+    {% for collection in collections %}
+      <a class="bd-shop__card" href="{{ collection.url }}">
+        <div class="reveal-mask" data-reveal-index="{{ forloop.index0 | modulo: 3 }}" data-reveal-duration="0.9">
+          <div class="reveal-inner">
+            <div class="bd-shop__frame">
+              {% if collection.featured_image %}
+                <img
+                  class="bd-shop__image"
+                  src="{{ collection.featured_image | image_url: width: 900 }}"
+                  alt="{{ collection.featured_image.alt | escape }}"
+                  width="900"
+                  height="1125"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% endif %}
+            </div>
 
-<h1>{{ 'collections.title' | t }}</h1>
-
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
-
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
-
-{% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
-  }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-{% endstylesheet %}
+            <div class="bd-shop__meta">
+              <h3 class="bd-shop__name">{{ collection.title }}</h3>
+              <span class="bd-shop__price">{{ collection.products_count }}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
 
 {% schema %}
 {
-  "name": "t:general.collections_grid",
+  "name": "Collections",
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop"
     },
     {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collections"
     }
-  ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  ]
 }
 {% endschema %}

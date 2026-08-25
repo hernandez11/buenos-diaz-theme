@@ -1,52 +1,69 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
-
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
-
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+<section class="bd-shop">
+  <div class="bd-product">
+    <div class="bd-product__media">
+      {% for media in product.media %}
+        <div class="bd-product__frame">
+          <img
+            class="bd-product__image"
+            src="{{ media | image_url: width: 1400 }}"
+            alt="{{ media.alt | escape }}"
+            width="1400"
+            height="1750"
+            {% if forloop.first %}
+              fetchpriority="high"
+            {% else %}
+              loading="lazy"
+            {% endif %}
+            decoding="async"
+          >
+        </div>
       {% endfor %}
-    </select>
+    </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+    <div class="bd-product__info">
+      <h1 class="bd-product__title">{{ product.title }}</h1>
+      <span class="bd-product__price">{{ product.price | money }}</span>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+      {% form 'product', product %}
+        {% unless product.has_only_default_variant %}
+          {% for option in product.options_with_values %}
+            <div class="bd-field">
+              <label class="bd-field__label" for="option-{{ forloop.index }}">
+                {{ option.name }}
+              </label>
+              <select class="bd-field__select" id="option-{{ forloop.index }}" name="options[{{ option.name | escape }}]">
+                {% for value in option.values %}
+                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                    {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endfor %}
+        {% endunless %}
+
+        <div class="bd-field">
+          <label class="bd-field__label" for="quantity">Quantity</label>
+          <input class="bd-field__input bd-cart__qty" id="quantity" type="number" name="quantity" value="1" min="1">
+        </div>
+
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        <button class="bd-button" type="submit" {% unless product.available %}disabled{% endunless %}>
+          {% if product.available %}Add To Cart{% else %}Sold Out{% endif %}
+        </button>
+      {% endform %}
+
+      {% if product.description != blank %}
+        <div class="bd-product__description">{{ product.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
 
 {% schema %}
 {
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "name": "Product",
+  "settings": []
 }
 {% endschema %}

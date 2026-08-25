@@ -1,47 +1,65 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+<section class="bd-shop">
+  <div class="bd-shop__head">
+    <span class="bd-shop__eyebrow">{{ section.settings.eyebrow }}</span>
+    <h1 class="bd-shop__heading">{{ collection.title }}</h1>
+  </div>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+  {% if collection.products.size == 0 %}
+    <p class="bd-shop__empty">{{ section.settings.empty_text }}</p>
+  {% else %}
+    <div class="bd-shop__grid">
+      {% for product in collection.products %}
+        <a class="bd-shop__card" href="{{ product.url }}">
+          <div class="reveal-mask" data-reveal-index="{{ forloop.index0 | modulo: 3 }}" data-reveal-duration="0.9">
+            <div class="reveal-inner">
+              <div class="bd-shop__frame">
+                {% if product.featured_image %}
+                  <img
+                    class="bd-shop__image"
+                    src="{{ product.featured_image | image_url: width: 900 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    width="900"
+                    height="1125"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                {% endif %}
+              </div>
 
-<h1>{{ collection.title }}</h1>
-
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
-      </div>
-    {% endfor %}
-
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
-</div>
-
-{% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-{% endstylesheet %}
+              <div class="bd-shop__meta">
+                <h3 class="bd-shop__name">{{ product.title }}</h3>
+                <span class="bd-shop__price">
+                  {%- if product.available -%}
+                    {{ product.price | money }}
+                  {%- else -%}
+                    <span class="bd-shop__sold-out">Sold Out</span>
+                  {%- endif -%}
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
 
 {% schema %}
 {
-  "name": "t:general.collection",
-  "settings": []
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty state text",
+      "default": "Nothing here yet. Check back soon."
+    }
+  ]
 }
 {% endschema %}

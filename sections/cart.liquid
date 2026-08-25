@@ -1,37 +1,86 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+<section class="bd-shop">
+  <div class="bd-shop__head">
+    <span class="bd-shop__eyebrow">{{ section.settings.eyebrow }}</span>
+    <h1 class="bd-shop__heading">{{ section.settings.heading }}</h1>
+  </div>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
+  {% if cart.item_count == 0 %}
+    <p class="bd-shop__empty">{{ section.settings.empty_text }}</p>
+    <p><a class="bd-button bd-button--ghost" href="{{ routes.all_products_collection_url }}">Browse</a></p>
+  {% else %}
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
+      <div class="bd-cart__table">
+        {% for line in cart.items %}
+          <div class="bd-cart__row">
+            <div class="bd-cart__thumb">
+              {% if line.image %}
+                <img
+                  src="{{ line.image | image_url: width: 400 }}"
+                  alt="{{ line.image.alt | escape }}"
+                  width="400"
+                  height="500"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% endif %}
+            </div>
 
-<h1>{{ 'cart.title' | t }}</h1>
+            <div class="bd-cart__body">
+              <h3 class="bd-shop__name">{{ line.product.title }}</h3>
+              {% unless line.product.has_only_default_variant %}
+                <span class="bd-shop__price">{{ line.variant.title }}</span>
+              {% endunless %}
+              <span class="bd-shop__price">{{ line.final_line_price | money }}</span>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+              <div class="bd-field">
+                <label class="bd-field__label" for="qty-{{ line.index | plus: 1 }}">Quantity</label>
+                <input
+                  class="bd-field__input bd-cart__qty"
+                  id="qty-{{ line.index | plus: 1 }}"
+                  type="number"
+                  name="updates[]"
+                  value="{{ line.quantity }}"
+                  min="0"
+                >
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+      <div class="bd-cart__footer">
+        <span class="bd-cart__total">Total {{ cart.total_price | money }}</span>
+        <div class="bd-shop__meta" style="gap: 1rem">
+          <button class="bd-button bd-button--ghost" type="submit" name="update">Update</button>
+          <button class="bd-button" type="submit" name="checkout">Checkout</button>
+        </div>
+      </div>
+    </form>
+  {% endif %}
+</section>
 
 {% schema %}
 {
-  "name": "t:general.cart",
-  "settings": []
+  "name": "Cart",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Your bag"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Cart"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty state text",
+      "default": "Your cart is empty."
+    }
+  ]
 }
 {% endschema %}
