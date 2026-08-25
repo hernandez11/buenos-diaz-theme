@@ -87,6 +87,8 @@ export function initReveals(root = document) {
       return
     }
 
+    let failsafe = 0
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -100,7 +102,7 @@ export function initReveals(root = document) {
 
     observer.observe(el)
 
-    const failsafe = window.setTimeout(() => {
+    failsafe = window.setTimeout(() => {
       show()
       observer.disconnect()
     }, REVEAL_FAILSAFE_MS)

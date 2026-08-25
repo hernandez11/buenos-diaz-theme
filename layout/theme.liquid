@@ -50,22 +50,32 @@
         initClips,
       } from '{{ 'events.js' | asset_url }}';
 
+      const run = (name, fn) => {
+        try {
+          fn();
+        } catch (error) {
+          console.error('[buenos-diaz] ' + name + ' failed', error);
+        }
+      };
+
       const boot = () => {
-        if (window.Lenis) initSmoothScroll(window.Lenis);
-        initVisualZoom();
-        initCursor();
-        initHeader();
-        initScrollLogo();
-        initHero();
-        initMenu();
-        initContactScroll();
-        initContactForm();
-        initFaq();
-        initEvents();
-        initEventCards();
-        initDetailFrames();
-        initClips();
-        initReveals();
+        run('reveals', () => initReveals());
+        run('detailFrames', () => initDetailFrames());
+        run('smoothScroll', () => {
+          if (window.Lenis) initSmoothScroll(window.Lenis);
+        });
+        run('visualZoom', () => initVisualZoom());
+        run('cursor', () => initCursor());
+        run('header', () => initHeader());
+        run('scrollLogo', () => initScrollLogo());
+        run('hero', () => initHero());
+        run('menu', () => initMenu());
+        run('contactScroll', () => initContactScroll());
+        run('contactForm', () => initContactForm());
+        run('faq', () => initFaq());
+        run('events', () => initEvents());
+        run('eventCards', () => initEventCards());
+        run('clips', () => initClips());
       };
 
       if (document.readyState === 'loading') {
@@ -74,7 +84,7 @@
         boot();
       }
 
-      document.addEventListener('shopify:section:load', () => initReveals());
+      document.addEventListener('shopify:section:load', () => run('reveals', () => initReveals()));
     </script>
   </body>
 </html>
