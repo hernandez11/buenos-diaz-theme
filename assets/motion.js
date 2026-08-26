@@ -379,11 +379,25 @@ export function initHeader() {
     paint()
   }
 
+  const contactTarget = () => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+    const contact = document.querySelector('[data-bd-contact]')
+    if (!contact) return max
+
+    const rect = contact.getBoundingClientRect()
+    const top = rect.top + window.scrollY
+    const end = top + rect.height - window.innerHeight
+    return Math.max(0, Math.min(end, max))
+  }
+
   const scrollToContact = () => {
-    const target = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
     const lenis = getLenis()
-    if (lenis) lenis.scrollTo(target, { duration: 1.8 })
-    else window.scrollTo({ top: target, behavior: 'smooth' })
+    if (lenis) {
+      lenis.resize()
+      lenis.scrollTo(contactTarget(), { duration: 1.8 })
+      return
+    }
+    window.scrollTo({ top: contactTarget(), behavior: 'smooth' })
   }
 
   const onDropdownClick = (event) => {
@@ -401,6 +415,18 @@ export function initHeader() {
     }
 
     setOpen(false)
+  }
+
+  if (window.location.hash === '#contact' && document.querySelector('[data-bd-contact]')) {
+    window.setTimeout(() => {
+      const lenis = getLenis()
+      if (lenis) {
+        lenis.resize()
+        lenis.scrollTo(contactTarget(), { immediate: true })
+      } else {
+        window.scrollTo({ top: contactTarget() })
+      }
+    }, 300)
   }
 
   toggle.addEventListener('click', onToggle)
