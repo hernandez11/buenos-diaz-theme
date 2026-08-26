@@ -62,10 +62,16 @@
   {%- assign photo = file.preview_image | default: file -%}
   <img
     class="bd-detail__photo"
-    src="{{ photo | image_url: width: 1600 }}"
+    src="{{ photo | image_url: width: 800 }}"
+    srcset="
+      {{ photo | image_url: width: 400 }} 400w,
+      {{ photo | image_url: width: 800 }} 800w,
+      {{ photo | image_url: width: 1200 }} 1200w
+    "
+    sizes="(max-width: 767px) 88vw, 50vw"
     alt=""
-    width="1600"
-    height="1060"
+    width="800"
+    height="530"
     loading="lazy"
     decoding="async"
   >

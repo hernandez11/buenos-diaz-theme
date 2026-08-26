@@ -32,6 +32,25 @@
   assign buffer_copies = 7
   assign center_copy = 3
   assign center_virtual = center_copy | times: event_count | plus: default_index
+
+  assign before = 0
+  for n in (1..200)
+    assign v = forloop.index0
+    if v >= center_virtual
+      break
+    endif
+    assign d = center_virtual | minus: v
+    if d == 1
+      assign before = before | plus: 10
+    elsif d == 2
+      assign before = before | plus: 9
+    elsif d == 3
+      assign before = before | plus: 5
+    else
+      assign before = before | plus: 6.5
+    endif
+  endfor
+  assign start_offset = 50 | minus: before | minus: 25
 -%}
 
 {% if event_count == 0 %}
@@ -59,7 +78,7 @@
         </div>
 
         <div class="bd-events__viewport">
-          <div class="bd-events__track" data-bd-events-track>
+          <div class="bd-events__track" data-bd-events-track style="transform: translateX({{ start_offset }}cqw)">
             {% for copy in (1..buffer_copies) %}
               {% for h in handles %}
                 {%- liquid
@@ -70,9 +89,31 @@
                     assign upcoming = true
                   endif
                   assign v = forloop.parentloop.index0 | times: event_count | plus: forloop.index0
+                  assign dist = v | minus: center_virtual
+                  if dist < 0
+                    assign dist = 0 | minus: dist
+                  endif
+                  case dist
+                    when 0
+                      assign tw = 50
+                      assign tov = 0
+                    when 1
+                      assign tw = 10
+                      assign tov = 0.5
+                    when 2
+                      assign tw = 9
+                      assign tov = 0.6
+                    when 3
+                      assign tw = 5
+                      assign tov = 0.7
+                    else
+                      assign tw = 6.5
+                      assign tov = 0.75
+                  endcase
                 -%}
                 <div
                   class="bd-events__tile"
+                  style="flex-basis: {{ tw }}cqw"
                   data-bd-tile
                   data-bd-v="{{ v }}"
                   data-bd-url="{{ item.system.url }}"
@@ -83,9 +124,9 @@
                       field: item.poster,
                       class: 'bd-events__tile-image',
                       alt: item.title.value,
-                      width: 1200
+                      width: 900
                     %}
-                    <div class="bd-events__tile-overlay" data-bd-overlay></div>
+                    <div class="bd-events__tile-overlay" data-bd-overlay style="opacity: {{ tov }}"></div>
                   </div>
                 </div>
               {% endfor %}
