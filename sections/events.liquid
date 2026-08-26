@@ -35,34 +35,6 @@
   assign center_virtual = center_copy | times: event_count | plus: default_index
 -%}
 
-<pre class="bd-events__debug">
-raw_events size: {{ raw_events.size }}
-{% for item in raw_events %}
---- {{ item.system.handle }} ---
-CONTROL  title.value        : [{{ item.title.value }}]
-CONTROL  title.type         : [{{ item.title.type }}]
-A  item.poster              : [{{ item.poster }}]
-B  item.poster.value        : [{{ item.poster.value }}]
-C  item.poster.value.id     : [{{ item.poster.value.id }}]
-D  item.poster.value.url    : [{{ item.poster.value.url }}]
-E  item.poster.value.image  : [{{ item.poster.value.image }}]
-
-{%- assign g = metaobjects.event[item.system.handle] -%}
-F  global exists            : [{{ g.system.handle }}]
-G  global title.value       : [{{ g.title.value }}]
-H  global poster.value      : [{{ g.poster.value }}]
-I  global poster.value.id   : [{{ g.poster.value.id }}]
-J  global poster url        : [{{ g.poster.value | image_url: width: 400 }}]
-K  global gallery size       : [{{ g.gallery.value.size }}]
-
-{%- assign m2 = metaobjects['event'][item.system.handle] -%}
-L  bracket poster.value     : [{{ m2.poster.value }}]
-M  bracket poster url       : [{{ m2.poster.value | image_url: width: 400 }}]
-{% endfor %}
-ALL EVENT HANDLES via global:
-{% for e in metaobjects.event.values %}  - {{ e.system.handle }} poster:[{{ e.poster.value.id }}]
-{% endfor %}</pre>
-
 {% if event_count == 0 %}
   <section class="bd-events-empty">
     <p class="secondaryTitle">No events yet.</p>
@@ -235,21 +207,6 @@ ALL EVENT HANDLES via global:
 {% endif %}
 
 {% stylesheet %}
-  .bd-events__debug {
-    position: relative;
-    z-index: 50;
-    background: #fffdfa;
-    color: #1e1e1e;
-    font-family: monospace;
-    font-size: 11px;
-    line-height: 1.5;
-    padding: 1rem;
-    margin: 0;
-    white-space: pre-wrap;
-    word-break: break-all;
-    border-bottom: 2px solid #ed6636;
-  }
-
   .bd-events-empty {
     padding: 8rem 1.5rem;
     text-align: center;
