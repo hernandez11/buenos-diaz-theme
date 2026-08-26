@@ -35,6 +35,30 @@
   assign center_virtual = center_copy | times: event_count | plus: default_index
 -%}
 
+{% if section.settings.debug %}
+  <pre class="bd-events__debug">
+raw_events size: {{ raw_events.size }}
+event_count: {{ event_count }}
+default_index: {{ default_index }}
+center_virtual: {{ center_virtual }}
+{% for item in raw_events %}
+--- event {{ forloop.index0 }} ---
+system.handle : {{ item.system.handle }}
+system.url    : {{ item.system.url }}
+title.value   : {{ item.title.value }}
+date.value    : {{ item.date.value }}
+poster        : [{{ item.poster }}]
+poster.value  : [{{ item.poster.value }}]
+poster.type   : [{{ item.poster.type }}]
+p.v.preview   : [{{ item.poster.value.preview_image }}]
+p.v.src       : [{{ item.poster.value.src }}]
+url via value : [{{ item.poster.value | image_url: width: 400 }}]
+url via prev  : [{{ item.poster.value.preview_image | image_url: width: 400 }}]
+gallery size  : {{ item.gallery.value.size }}
+{% endfor %}
+  </pre>
+{% endif %}
+
 {% if event_count == 0 %}
   <section class="bd-events-empty">
     <p class="secondaryTitle">No events yet.</p>
@@ -207,6 +231,21 @@
 {% endif %}
 
 {% stylesheet %}
+  .bd-events__debug {
+    position: relative;
+    z-index: 50;
+    background: #fffdfa;
+    color: #1e1e1e;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 1rem;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border-bottom: 2px solid #ed6636;
+  }
+
   .bd-events-empty {
     padding: 8rem 1.5rem;
     text-align: center;
@@ -542,7 +581,14 @@
 {% schema %}
 {
   "name": "Events",
-  "settings": [],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "debug",
+      "label": "Show debug output",
+      "default": false
+    }
+  ],
   "presets": [
     {
       "name": "Events"
