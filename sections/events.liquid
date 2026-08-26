@@ -37,25 +37,31 @@
 
 <pre class="bd-events__debug">
 raw_events size: {{ raw_events.size }}
-event_count: {{ event_count }}
-default_index: {{ default_index }}
-center_virtual: {{ center_virtual }}
 {% for item in raw_events %}
---- event {{ forloop.index0 }} ---
-system.handle : {{ item.system.handle }}
-system.url    : {{ item.system.url }}
-title.value   : {{ item.title.value }}
-date.value    : {{ item.date.value }}
-poster        : [{{ item.poster }}]
-poster.value  : [{{ item.poster.value }}]
-poster.type   : [{{ item.poster.type }}]
-p.v.preview   : [{{ item.poster.value.preview_image }}]
-p.v.src       : [{{ item.poster.value.src }}]
-url via value : [{{ item.poster.value | image_url: width: 400 }}]
-url via prev  : [{{ item.poster.value.preview_image | image_url: width: 400 }}]
-gallery size  : {{ item.gallery.value.size }}
+--- {{ item.system.handle }} ---
+CONTROL  title.value        : [{{ item.title.value }}]
+CONTROL  title.type         : [{{ item.title.type }}]
+A  item.poster              : [{{ item.poster }}]
+B  item.poster.value        : [{{ item.poster.value }}]
+C  item.poster.value.id     : [{{ item.poster.value.id }}]
+D  item.poster.value.url    : [{{ item.poster.value.url }}]
+E  item.poster.value.image  : [{{ item.poster.value.image }}]
+
+{%- assign g = metaobjects.event[item.system.handle] -%}
+F  global exists            : [{{ g.system.handle }}]
+G  global title.value       : [{{ g.title.value }}]
+H  global poster.value      : [{{ g.poster.value }}]
+I  global poster.value.id   : [{{ g.poster.value.id }}]
+J  global poster url        : [{{ g.poster.value | image_url: width: 400 }}]
+K  global gallery size       : [{{ g.gallery.value.size }}]
+
+{%- assign m2 = metaobjects['event'][item.system.handle] -%}
+L  bracket poster.value     : [{{ m2.poster.value }}]
+M  bracket poster url       : [{{ m2.poster.value | image_url: width: 400 }}]
 {% endfor %}
-</pre>
+ALL EVENT HANDLES via global:
+{% for e in metaobjects.event.values %}  - {{ e.system.handle }} poster:[{{ e.poster.value.id }}]
+{% endfor %}</pre>
 
 {% if event_count == 0 %}
   <section class="bd-events-empty">
