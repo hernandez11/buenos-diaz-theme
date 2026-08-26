@@ -1,0 +1,65 @@
+{%- liquid
+  assign bd_src = ''
+  assign bd_via = 'none'
+  assign bd_w = width | default: 1200
+
+  assign v = field.value
+  assign f = field
+
+  if v != blank and v.preview_image != blank
+    assign bd_src = v.preview_image | image_url: width: bd_w
+    assign bd_via = 'value.preview_image'
+  endif
+
+  if bd_src == blank and v != blank and v.src != blank
+    assign bd_src = v | image_url: width: bd_w
+    assign bd_via = 'value.src'
+  endif
+
+  if bd_src == blank and v != blank and v.width != blank
+    assign bd_src = v | image_url: width: bd_w
+    assign bd_via = 'value.width'
+  endif
+
+  if bd_src == blank and f != blank and f.preview_image != blank
+    assign bd_src = f.preview_image | image_url: width: bd_w
+    assign bd_via = 'field.preview_image'
+  endif
+
+  if bd_src == blank and f != blank and f.src != blank
+    assign bd_src = f | image_url: width: bd_w
+    assign bd_via = 'field.src'
+  endif
+
+  if bd_src == blank and f != blank and f.width != blank
+    assign bd_src = f | image_url: width: bd_w
+    assign bd_via = 'field.width'
+  endif
+-%}
+
+{%- if bd_src != blank -%}
+  <img
+    class="{{ class }}"
+    src="{{ bd_src }}"
+    alt="{{ alt | escape }}"
+    width="{{ bd_w }}"
+    height="{{ bd_w }}"
+    decoding="async"
+    draggable="false"
+    data-bd-via="{{ bd_via }}"
+  >
+{%- else -%}
+  <!-- bd:poster-miss
+    field_blank={% if f == blank %}yes{% else %}no{% endif %}
+    value_blank={% if v == blank %}yes{% else %}no{% endif %}
+    f.media_type=[{{ f.media_type }}]
+    f.preview_image=[{{ f.preview_image }}]
+    f.src=[{{ f.src }}]
+    f.width=[{{ f.width }}]
+    f.alt=[{{ f.alt }}]
+    f.id=[{{ f.id }}]
+    v.media_type=[{{ v.media_type }}]
+    v.src=[{{ v.src }}]
+    v.width=[{{ v.width }}]
+  -->
+{%- endif -%}

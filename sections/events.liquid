@@ -81,30 +81,12 @@
                   data-bd-locked="{% if upcoming %}true{% else %}false{% endif %}"
                 >
                   <div class="bd-events__tile-reveal">
-                    {%- liquid
-                      assign pv = item.poster.value
-                      assign tile_src = ''
-                      if pv != blank
-                        if pv.preview_image != blank
-                          assign tile_src = pv.preview_image | image_url: width: 1200
-                        else
-                          assign tile_src = pv | image_url: width: 1200
-                        endif
-                      endif
-                    -%}
-                    {% if tile_src != blank %}
-                      <img
-                        class="bd-events__tile-image"
-                        src="{{ tile_src }}"
-                        alt="{{ item.title.value | escape }}"
-                        width="1200"
-                        height="1500"
-                        decoding="async"
-                        draggable="false"
-                      >
-                    {% else %}
-                      <!-- bd:no-poster handle={{ item.system.handle }} pv_blank={% if pv == blank %}yes{% else %}no{% endif %} -->
-                    {% endif %}
+                    {% render 'event-poster',
+                      field: item.poster,
+                      class: 'bd-events__tile-image',
+                      alt: item.title.value,
+                      width: 1200
+                    %}
                     <div class="bd-events__tile-overlay" data-bd-overlay></div>
                   </div>
                 </div>
@@ -166,27 +148,12 @@
                 </span>
 
                 <div class="bd-events__card-frame">
-                  {%- liquid
-                    assign cpv = item.poster.value
-                    assign card_src = ''
-                    if cpv != blank
-                      if cpv.preview_image != blank
-                        assign card_src = cpv.preview_image | image_url: width: 900
-                      else
-                        assign card_src = cpv | image_url: width: 900
-                      endif
-                    endif
-                  -%}
-                  {% if card_src != blank %}
-                    <img
-                      class="bd-events__card-image"
-                      src="{{ card_src }}"
-                      alt="{{ item.title.value | escape }}"
-                      width="900"
-                      height="1125"
-                      decoding="async"
-                    >
-                  {% endif %}
+                  {% render 'event-poster',
+                    field: item.poster,
+                    class: 'bd-events__card-image',
+                    alt: item.title.value,
+                    width: 900
+                  %}
                 </div>
 
                 <div class="bd-events__card-meta">
