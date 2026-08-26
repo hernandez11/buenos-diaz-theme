@@ -3,14 +3,9 @@
     "countdown": {
       "type": "countdown",
       "settings": {}
-    },
-    "main": {
-      "type": "collection",
-      "settings": {}
     }
   },
   "order": [
-    "countdown",
-    "main"
+    "countdown"
   ]
 }
