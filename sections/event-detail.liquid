@@ -1,19 +1,45 @@
 {%- liquid
   assign event = metaobject
-  assign poster = event.poster.value
   assign gallery = event.gallery.value
-  assign layout = event.layout.value
 
-  if layout == blank or layout.size == 0
-    assign layout = 'full,pair,wide,tall' | split: ','
+  assign layout_raw = event.layout.value | join: ','
+  if layout_raw == blank
+    assign layout_raw = 'full,pair,wide,tall'
   endif
+  assign layout = layout_raw | split: ','
 
-  assign media_list = ''
-  for file in gallery
-    assign media_list = media_list | append: forloop.index0 | append: ','
+  assign media_count = 0
+  for f in gallery
+    assign media_count = media_count | plus: 1
   endfor
-  assign media_list = media_list | split: ','
-  assign media_count = media_list.size
+
+  assign kinds = ''
+  assign cursor = 0
+  assign step = 0
+  for i in (1..80)
+    if cursor >= media_count
+      break
+    endif
+    assign pi = step | modulo: layout.size
+    assign kind = layout[pi] | strip
+    assign remaining = media_count | minus: cursor
+    assign span = 1
+    if kind == 'pair'
+      assign span = 2
+    endif
+    if span > remaining
+      assign kind = 'full'
+      assign span = 1
+    endif
+    if span == 2
+      assign kinds = kinds | append: 'pairA,pairB,'
+    else
+      assign kinds = kinds | append: kind | append: ','
+    endif
+    assign cursor = cursor | plus: span
+    assign step = step | plus: 1
+  endfor
+  assign kinds = kinds | split: ','
 -%}
 
 {% if event.description.value != blank %}
@@ -32,82 +58,50 @@
 </div>
 
 <div class="bd-detail__hero">
-  {% if poster != blank %}
-    {%- assign hero_img = poster.preview_image | default: poster -%}
-    <img
-      class="bd-detail__hero-image"
-      src="{{ hero_img | image_url: width: 1600 }}"
-      alt="{{ event.title.value | escape }}"
-      width="1600"
-      height="2000"
-      fetchpriority="high"
-      decoding="async"
-    >
-  {% endif %}
+  {% render 'event-poster',
+    field: event.poster,
+    class: 'bd-detail__hero-image',
+    alt: event.title.value,
+    width: 1600
+  %}
 </div>
 
 <div class="bd-detail">
   <div class="bd-detail__stack">
-    {%- liquid
-      assign cursor = 0
-      assign step = 0
-    -%}
-
-    {% for iteration in (1..60) %}
-      {% if cursor >= media_count %}
-        {% break %}
-      {% endif %}
-
+    {% for file in gallery %}
       {%- liquid
-        assign pattern_index = step | modulo: layout.size
-        assign kind = layout[pattern_index] | strip
-        assign remaining = media_count | minus: cursor
-
-        assign span = 1
-        if kind == 'pair'
-          assign span = 2
-        endif
-
-        if span > remaining
-          assign kind = 'full'
-          assign span = 1
-        endif
-
-        case kind
+        assign k = kinds[forloop.index0]
+        case k
           when 'wide'
             assign aspect = '746 / 334'
           when 'tall'
             assign aspect = '746 / 560'
-          when 'pair'
+          when 'pairA'
+            assign aspect = '351 / 278'
+          when 'pairB'
             assign aspect = '351 / 278'
           else
             assign aspect = '746 / 494'
         endcase
       -%}
 
-      <div class="bd-detail__column">
-        {% if kind == 'pair' %}
+      {%- if k == 'pairA' -%}
+        <div class="bd-detail__column">
           <div class="bd-detail__pair">
-            {% for offset in (0..1) %}
-              {%- assign media_index = cursor | plus: offset -%}
-              {%- assign file = gallery[media_index] -%}
-              <div class="bd-detail__frame" data-bd-frame style="aspect-ratio: {{ aspect }}">
-                {% render 'event-media', file: file %}
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          {%- assign file = gallery[cursor] -%}
-          <div class="bd-detail__frame" data-bd-frame style="aspect-ratio: {{ aspect }}">
-            {% render 'event-media', file: file %}
-          </div>
-        {% endif %}
+      {%- elsif k != 'pairB' -%}
+        <div class="bd-detail__column">
+      {%- endif -%}
+
+      <div class="bd-detail__frame" data-bd-frame style="aspect-ratio: {{ aspect }}">
+        {% render 'event-media', file: file %}
       </div>
 
-      {%- liquid
-        assign cursor = cursor | plus: span
-        assign step = step | plus: 1
-      -%}
+      {%- if k == 'pairB' -%}
+          </div>
+        </div>
+      {%- elsif k != 'pairA' -%}
+        </div>
+      {%- endif -%}
     {% endfor %}
   </div>
 

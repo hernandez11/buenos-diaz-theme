@@ -1,30 +1,29 @@
 {%- liquid
-  assign raw_events = shop.metaobjects.event.values
   assign now_epoch = 'now' | date: '%s' | plus: 0
 
   assign sort_keys = ''
-  for item in raw_events
-    assign epoch = item.date.value | date: '%s'
+  for entry in shop.metaobjects.event.values
+    assign epoch = entry.date.value | date: '%s'
     assign padded = epoch | prepend: '0000000000' | slice: -10, 10
-    assign sort_keys = sort_keys | append: padded | append: ':' | append: forloop.index0 | append: ','
+    assign sort_keys = sort_keys | append: padded | append: '~' | append: entry.system.handle | append: ','
   endfor
 
   assign ordered = sort_keys | split: ',' | sort | reverse
 
-  assign order_list = ''
+  assign handles = ''
   for key in ordered
-    assign parts = key | split: ':'
-    assign order_list = order_list | append: parts[1] | append: ','
+    assign parts = key | split: '~'
+    assign handles = handles | append: parts[1] | append: ','
   endfor
-  assign order_list = order_list | split: ','
-  assign event_count = order_list.size
+  assign handles = handles | split: ','
+  assign event_count = handles.size
 
   assign default_index = 0
   assign found_past = false
-  for position in order_list
-    assign idx = position | plus: 0
-    assign epoch = raw_events[idx].date.value | date: '%s' | plus: 0
-    if epoch <= now_epoch and found_past == false
+  for h in handles
+    assign ev = metaobjects.event[h]
+    assign ev_epoch = ev.date.value | date: '%s' | plus: 0
+    if ev_epoch <= now_epoch and found_past == false
       assign default_index = forloop.index0
       assign found_past = true
     endif
@@ -34,41 +33,6 @@
   assign center_copy = 3
   assign center_virtual = center_copy | times: event_count | plus: default_index
 -%}
-
-{%- assign dbg = raw_events[0] -%}
-{%- assign df = dbg.poster -%}
-{%- assign dv = dbg.poster.value -%}
-<pre class="bd-events__debug">
-handle: {{ dbg.system.handle }}
-
-FIELD SHAPE  (dbg.poster)
-  blank?          {% if df == blank %}YES{% else %}NO{% endif %}
-  media_type      [{{ df.media_type }}]
-  src             [{{ df.src }}]
-  width           [{{ df.width }}]
-  height          [{{ df.height }}]
-  alt             [{{ df.alt }}]
-  id              [{{ df.id }}]
-  preview_image   [{{ df.preview_image }}]
-  preview.src     [{{ df.preview_image.src }}]
-
-VALUE SHAPE  (dbg.poster.value)
-  blank?          {% if dv == blank %}YES{% else %}NO{% endif %}
-  media_type      [{{ dv.media_type }}]
-  src             [{{ dv.src }}]
-  width           [{{ dv.width }}]
-  id              [{{ dv.id }}]
-  preview_image   [{{ dv.preview_image }}]
-
-OTHER FIELDS
-  layout.value    [{{ dbg.layout.value }}]
-  gallery         blank? {% if dbg.gallery == blank %}YES{% else %}NO{% endif %}  size [{{ dbg.gallery.size }}]
-  gallery.value   blank? {% if dbg.gallery.value == blank %}YES{% else %}NO{% endif %}  size [{{ dbg.gallery.value.size }}]
-  gallery[0]      [{{ dbg.gallery[0] }}] src [{{ dbg.gallery[0].src }}]
-
-ALL KEYS ON dbg:
-{% for pair in dbg %}  {{ pair[0] }} = [{{ pair[1] }}]
-{% endfor %}</pre>
 
 {% if event_count == 0 %}
   <section class="bd-events-empty">
@@ -97,10 +61,9 @@ ALL KEYS ON dbg:
         <div class="bd-events__viewport">
           <div class="bd-events__track" data-bd-events-track>
             {% for copy in (1..buffer_copies) %}
-              {% for position in order_list %}
+              {% for h in handles %}
                 {%- liquid
-                  assign idx = position | plus: 0
-                  assign item = raw_events[idx]
+                  assign item = metaobjects.event[h]
                   assign epoch = item.date.value | date: '%s' | plus: 0
                   assign upcoming = false
                   if epoch > now_epoch
@@ -133,7 +96,7 @@ ALL KEYS ON dbg:
 
       <div class="bd-events__below" data-bd-events-below>
         <div class="bd-events__hint" data-bd-events-hint>
-          {% for position in order_list %}
+          {% for h in handles %}
             <span class="bd-events__dot"></span>
           {% endfor %}
         </div>
@@ -155,10 +118,9 @@ ALL KEYS ON dbg:
 
     <div class="bd-events__mobile">
       <div class="bd-events__cards">
-        {% for position in order_list %}
+        {% for h in handles %}
           {%- liquid
-            assign idx = position | plus: 0
-            assign item = raw_events[idx]
+            assign item = metaobjects.event[h]
             assign epoch = item.date.value | date: '%s' | plus: 0
             assign upcoming = false
             if epoch > now_epoch
@@ -208,10 +170,9 @@ ALL KEYS ON dbg:
 
     <script type="application/json" data-bd-events-data>
       [
-        {%- for position in order_list -%}
+        {%- for h in handles -%}
           {%- liquid
-            assign idx = position | plus: 0
-            assign item = raw_events[idx]
+            assign item = metaobjects.event[h]
             assign epoch = item.date.value | date: '%s' | plus: 0
             assign upcoming = false
             if epoch > now_epoch
@@ -231,21 +192,6 @@ ALL KEYS ON dbg:
 {% endif %}
 
 {% stylesheet %}
-  .bd-events__debug {
-    position: relative;
-    z-index: 50;
-    background: #fffdfa;
-    color: #1e1e1e;
-    font-family: monospace;
-    font-size: 11px;
-    line-height: 1.5;
-    padding: 1rem;
-    margin: 0;
-    white-space: pre-wrap;
-    word-break: break-all;
-    border-bottom: 2px solid #ed6636;
-  }
-
   .bd-events-empty {
     padding: 8rem 1.5rem;
     text-align: center;
