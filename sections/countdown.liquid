@@ -1,0 +1,278 @@
+<section class="bd-countdown" data-bd-countdown data-bd-target="{{ section.settings.target | escape }}">
+  <div class="bd-countdown__inner">
+    {% if section.settings.eyebrow != blank %}
+      <div class="reveal-mask" data-reveal-index="0" data-reveal-duration="0.9">
+        <div class="reveal-inner">
+          <p class="bd-countdown__eyebrow">{{ section.settings.eyebrow }}</p>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <div class="reveal-mask" data-reveal-index="1" data-reveal-duration="0.9">
+        <div class="reveal-inner">
+          <h1 class="bd-countdown__heading">{{ section.settings.heading }}</h1>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="reveal-mask" data-reveal-index="2" data-reveal-duration="0.9">
+      <div class="reveal-inner">
+        <div class="bd-countdown__clock" data-bd-countdown-clock>
+          <div class="bd-countdown__unit">
+            <span class="bd-countdown__value" data-bd-days>00</span>
+            <span class="bd-countdown__label">{{ section.settings.label_days }}</span>
+          </div>
+          <span class="bd-countdown__sep" aria-hidden="true"></span>
+          <div class="bd-countdown__unit">
+            <span class="bd-countdown__value" data-bd-hours>00</span>
+            <span class="bd-countdown__label">{{ section.settings.label_hours }}</span>
+          </div>
+          <span class="bd-countdown__sep" aria-hidden="true"></span>
+          <div class="bd-countdown__unit">
+            <span class="bd-countdown__value" data-bd-minutes>00</span>
+            <span class="bd-countdown__label">{{ section.settings.label_minutes }}</span>
+          </div>
+          <span class="bd-countdown__sep" aria-hidden="true"></span>
+          <div class="bd-countdown__unit">
+            <span class="bd-countdown__value" data-bd-seconds>00</span>
+            <span class="bd-countdown__label">{{ section.settings.label_seconds }}</span>
+          </div>
+        </div>
+
+        <p class="bd-countdown__done" data-bd-countdown-done hidden>
+          {{ section.settings.done_message }}
+        </p>
+      </div>
+    </div>
+
+    {% if section.settings.note != blank %}
+      <div class="reveal-mask" data-reveal-index="3" data-reveal-duration="0.9">
+        <div class="reveal-inner">
+          <p class="bd-countdown__note">{{ section.settings.note }}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .bd-countdown {
+    width: 100%;
+    flex: 1 0 auto;
+    container-type: inline-size;
+    background-color: var(--color-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: calc(100svh - var(--header-h, 88px) - var(--footer-h, 56px));
+    padding: 4rem 1.5rem;
+  }
+
+  .bd-countdown__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5cqw;
+    max-width: 90cqw;
+  }
+
+  .bd-countdown__eyebrow {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .bd-countdown__heading {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-semibold);
+    font-size: var(--size-display-lg);
+    color: var(--color-ink);
+  }
+
+  .bd-countdown__clock {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2cqw;
+    margin-top: 1cqw;
+  }
+
+  .bd-countdown__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6cqw;
+    min-width: 0;
+  }
+
+  .bd-countdown__value {
+    font-family: var(--font-sans);
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    font-size: clamp(48px, 10cqw, 132px);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bd-countdown__label {
+    font-family: var(--font-sans);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .bd-countdown__sep {
+    display: block;
+    width: clamp(20px, 2.5cqw, 44px);
+    height: 1px;
+    background-color: var(--color-ink);
+    margin-top: clamp(24px, 5cqw, 66px);
+    flex: 0 0 auto;
+  }
+
+  .bd-countdown__done {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: var(--leading-flat);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-semibold);
+    font-size: var(--size-display-md);
+    color: var(--color-accent);
+  }
+
+  .bd-countdown__done[hidden] {
+    display: none;
+  }
+
+  .bd-countdown__note {
+    font-family: var(--font-sans);
+    margin: 0;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    font-size: var(--size-body);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    max-width: 44ch;
+    margin-top: 1cqw;
+  }
+
+  @media (max-width: 767px) {
+    .bd-countdown__inner {
+      gap: 1.5rem;
+      max-width: 100%;
+    }
+
+    .bd-countdown__clock {
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .bd-countdown__unit {
+      gap: 0.4rem;
+    }
+
+    .bd-countdown__value {
+      font-size: clamp(32px, 13vw, 56px);
+    }
+
+    .bd-countdown__sep {
+      width: 0.75rem;
+      margin-top: clamp(16px, 6vw, 26px);
+    }
+
+    .bd-countdown__note {
+      margin-top: 0.5rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Countdown",
+  "settings": [
+    {
+      "type": "text",
+      "id": "target",
+      "label": "Launch date and time",
+      "info": "ISO 8601 with timezone offset. Eastern is -04:00 in summer and -05:00 in winter.",
+      "default": "2026-09-16T10:00:00-04:00"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The Shop"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Opening Soon"
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Note",
+      "default": "September 16 at 10AM Eastern"
+    },
+    {
+      "type": "text",
+      "id": "done_message",
+      "label": "Message when the countdown ends",
+      "default": "We're Open"
+    },
+    {
+      "type": "header",
+      "content": "Unit labels"
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Days",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Hours",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "label_minutes",
+      "label": "Minutes",
+      "default": "Minutes"
+    },
+    {
+      "type": "text",
+      "id": "label_seconds",
+      "label": "Seconds",
+      "default": "Seconds"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown"
+    }
+  ]
+}
+{% endschema %}

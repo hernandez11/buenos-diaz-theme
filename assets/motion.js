@@ -743,3 +743,60 @@ export function initFaq() {
   if (!frame || !image) return () => {}
   return initParallax(frame, image, { speed: -0.42 })
 }
+
+export function initCountdown() {
+  const root = document.querySelector('[data-bd-countdown]')
+  if (!root) return () => {}
+
+  const target = Date.parse(root.dataset.bdTarget)
+  if (Number.isNaN(target)) return () => {}
+
+  const clock = root.querySelector('[data-bd-countdown-clock]')
+  const done = root.querySelector('[data-bd-countdown-done]')
+  const daysEl = root.querySelector('[data-bd-days]')
+  const hoursEl = root.querySelector('[data-bd-hours]')
+  const minutesEl = root.querySelector('[data-bd-minutes]')
+  const secondsEl = root.querySelector('[data-bd-seconds]')
+
+  const pad = (n) => (n < 10 ? '0' + n : String(n))
+
+  let timer = 0
+  let finished = false
+
+  const tick = () => {
+    const remaining = target - Date.now()
+
+    if (remaining <= 0) {
+      if (!finished) {
+        finished = true
+        if (clock) clock.hidden = true
+        if (done) done.hidden = false
+      }
+      return
+    }
+
+    const totalSeconds = Math.floor(remaining / 1000)
+    const days = Math.floor(totalSeconds / 86400)
+    const hours = Math.floor((totalSeconds % 86400) / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+
+    if (daysEl) daysEl.textContent = pad(days)
+    if (hoursEl) hoursEl.textContent = pad(hours)
+    if (minutesEl) minutesEl.textContent = pad(minutes)
+    if (secondsEl) secondsEl.textContent = pad(seconds)
+  }
+
+  tick()
+  timer = window.setInterval(tick, 1000)
+
+  const onVisible = () => {
+    if (document.visibilityState === 'visible') tick()
+  }
+  document.addEventListener('visibilitychange', onVisible)
+
+  return () => {
+    window.clearInterval(timer)
+    document.removeEventListener('visibilitychange', onVisible)
+  }
+}
