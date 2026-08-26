@@ -13,6 +13,12 @@
     {% render 'meta-tags' %}
 
     {{ content_for_header }}
+
+    <script>
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+    </script>
   </head>
 
   <body class="template-{{ request.page_type }}">
@@ -37,6 +43,7 @@
         initScrollLogo,
         initHero,
         initMenu,
+        getLenis,
         initContactForm,
         initContactScroll,
         initFaq,
@@ -57,10 +64,18 @@
       };
 
       const boot = () => {
+        if (!window.location.hash) {
+          window.scrollTo(0, 0);
+        }
         run('reveals', () => initReveals());
         run('detailFrames', () => initDetailFrames());
         run('smoothScroll', () => {
-          if (window.Lenis) initSmoothScroll(window.Lenis);
+          if (!window.Lenis) return;
+          initSmoothScroll(window.Lenis);
+          if (!window.location.hash) {
+            const lenis = getLenis();
+            if (lenis) lenis.scrollTo(0, { immediate: true });
+          }
         });
         run('visualZoom', () => initVisualZoom());
         run('cursor', () => initCursor());
