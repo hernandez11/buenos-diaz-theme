@@ -35,6 +35,41 @@
   assign center_virtual = center_copy | times: event_count | plus: default_index
 -%}
 
+{%- assign dbg = raw_events[0] -%}
+{%- assign df = dbg.poster -%}
+{%- assign dv = dbg.poster.value -%}
+<pre class="bd-events__debug">
+handle: {{ dbg.system.handle }}
+
+FIELD SHAPE  (dbg.poster)
+  blank?          {% if df == blank %}YES{% else %}NO{% endif %}
+  media_type      [{{ df.media_type }}]
+  src             [{{ df.src }}]
+  width           [{{ df.width }}]
+  height          [{{ df.height }}]
+  alt             [{{ df.alt }}]
+  id              [{{ df.id }}]
+  preview_image   [{{ df.preview_image }}]
+  preview.src     [{{ df.preview_image.src }}]
+
+VALUE SHAPE  (dbg.poster.value)
+  blank?          {% if dv == blank %}YES{% else %}NO{% endif %}
+  media_type      [{{ dv.media_type }}]
+  src             [{{ dv.src }}]
+  width           [{{ dv.width }}]
+  id              [{{ dv.id }}]
+  preview_image   [{{ dv.preview_image }}]
+
+OTHER FIELDS
+  layout.value    [{{ dbg.layout.value }}]
+  gallery         blank? {% if dbg.gallery == blank %}YES{% else %}NO{% endif %}  size [{{ dbg.gallery.size }}]
+  gallery.value   blank? {% if dbg.gallery.value == blank %}YES{% else %}NO{% endif %}  size [{{ dbg.gallery.value.size }}]
+  gallery[0]      [{{ dbg.gallery[0] }}] src [{{ dbg.gallery[0].src }}]
+
+ALL KEYS ON dbg:
+{% for pair in dbg %}  {{ pair[0] }} = [{{ pair[1] }}]
+{% endfor %}</pre>
+
 {% if event_count == 0 %}
   <section class="bd-events-empty">
     <p class="secondaryTitle">No events yet.</p>
@@ -196,6 +231,21 @@
 {% endif %}
 
 {% stylesheet %}
+  .bd-events__debug {
+    position: relative;
+    z-index: 50;
+    background: #fffdfa;
+    color: #1e1e1e;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 1rem;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border-bottom: 2px solid #ed6636;
+  }
+
   .bd-events-empty {
     padding: 8rem 1.5rem;
     text-align: center;
