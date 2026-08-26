@@ -1,5 +1,23 @@
+{%- liquid
+  assign path_now = request.path | split: '?' | first
+  if path_now.size > 1
+    assign path_now = path_now | remove_last: '/'
+  endif
+  assign home_now = routes.root_url | split: '?' | first
+  if home_now.size > 1
+    assign home_now = home_now | remove_last: '/'
+  endif
+-%}
+
 <header class="bd-header" data-bd-header>
-  <a class="bd-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+  <a
+    class="bd-header__logo"
+    href="{{ routes.root_url }}"
+    aria-label="{{ shop.name | escape }}"
+    {% if path_now == home_now %}
+      aria-current="page"
+    {% endif %}
+  >
     <span class="bd-header__logo-slot" data-logo-slot="header"></span>
   </a>
 
@@ -16,11 +34,22 @@
 
 <div class="bd-backdrop" data-bd-backdrop></div>
 
+{%- liquid
+  assign here = request.path | split: '?' | first
+  if here.size > 1
+    assign here = here | remove_last: '/'
+  endif
+-%}
+
 <div class="bd-dropdown" id="primary-navigation" data-bd-dropdown>
-  <a class="bd-dropdown__link" href="{{ routes.root_url }}">Home</a>
-  <a class="bd-dropdown__link" href="{{ routes.all_products_collection_url }}">Shop</a>
-  <a class="bd-dropdown__link" href="/pages/events">Events</a>
-  <a class="bd-dropdown__link" href="/pages/faq">FAQ</a>
+  {%- assign nav_home = routes.root_url -%}
+  {%- assign nav_shop = routes.all_products_collection_url -%}
+
+  {% render 'nav-link', url: nav_home, label: 'Home', here: here %}
+  {% render 'nav-link', url: nav_shop, label: 'Shop', here: here %}
+  {% render 'nav-link', url: '/pages/events', label: 'Events', here: here %}
+  {% render 'nav-link', url: '/pages/faq', label: 'FAQ', here: here %}
+
   <a class="bd-dropdown__link" href="{{ routes.root_url }}#contact">Contact</a>
 </div>
 
@@ -66,6 +95,11 @@
 
   .bd-header.is-hidden {
     transform: translateY(-100%);
+  }
+
+  .bd-header__logo[aria-current='page'] {
+    pointer-events: none;
+    cursor: default;
   }
 
   .bd-header__logo {
@@ -157,6 +191,11 @@
 
   .bd-dropdown__link:last-child {
     padding-bottom: 0;
+  }
+
+  .bd-dropdown__link[aria-current='page'] {
+    pointer-events: none;
+    cursor: default;
   }
 
   .bd-scroll-logo {

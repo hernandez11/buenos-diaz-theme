@@ -404,6 +404,11 @@ export function initHeader() {
     const link = event.target.closest('a')
     if (!link) return
 
+    if (link.getAttribute('aria-current') === 'page') {
+      event.preventDefault()
+      return
+    }
+
     const href = link.getAttribute('href') || ''
 
     if (href.endsWith('#contact')) {

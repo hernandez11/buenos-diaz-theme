@@ -1,0 +1,21 @@
+{%- liquid
+  assign target = url | split: '?' | first
+  if target.size > 1
+    assign target = target | remove_last: '/'
+  endif
+
+  assign is_current = false
+  if target == here
+    assign is_current = true
+  endif
+-%}
+
+<a
+  class="bd-dropdown__link"
+  href="{{ url }}"
+  {% if is_current %}
+    aria-current="page" data-bd-nav-current
+  {% endif %}
+>
+  {{- label -}}
+</a>
