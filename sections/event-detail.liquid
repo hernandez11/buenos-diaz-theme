@@ -197,7 +197,7 @@
     position: relative;
     width: 50cqw;
     height: min(clamp(400px, 63.4cqw, 570px), 66svh);
-    margin: 0 auto;
+    margin: calc(clamp(220px, 14cqw, 280px) / 2) auto 0;
     overflow: hidden;
     border: 0.5px solid var(--color-white);
   }
@@ -337,7 +337,7 @@
       width: 88%;
       height: auto;
       aspect-ratio: 4 / 5;
-      margin-top: 1.5rem;
+      margin: 1.5rem auto 0;
     }
 
     .bd-detail__stack {
