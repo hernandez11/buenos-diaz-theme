@@ -6,8 +6,6 @@
 
     {% render 'css-variables' %}
 
-    {% render 'fonts' %}
-
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'shop.css' | asset_url | stylesheet_tag }}
