@@ -8,10 +8,28 @@
   endif
   assign layout = layout_raw | split: ','
 
+  assign pid = ''
+  if event.poster.value.id != blank
+    assign pid = event.poster.value.id
+  elsif event.poster.id != blank
+    assign pid = event.poster.id
+  endif
+
   assign media_count = 0
+  assign total_media = 0
   for f in gallery
+    assign total_media = total_media | plus: 1
+    if pid != blank and f.id == pid
+      continue
+    endif
     assign media_count = media_count | plus: 1
   endfor
+
+  assign skip_poster = true
+  if media_count == 0
+    assign media_count = total_media
+    assign skip_poster = false
+  endif
 
   assign kinds = ''
   assign cursor = 0
@@ -68,9 +86,14 @@
 
 <div class="bd-detail">
   <div class="bd-detail__stack">
+    {%- assign gi = 0 -%}
     {% for file in gallery %}
+      {%- if skip_poster and pid != blank and file.id == pid -%}
+        {% continue %}
+      {%- endif -%}
       {%- liquid
-        assign k = kinds[forloop.index0]
+        assign k = kinds[gi]
+        assign gi = gi | plus: 1
         case k
           when 'wide'
             assign aspect = '746 / 334'
