@@ -213,6 +213,7 @@ export function initCursor() {
   document.body.appendChild(el)
 
   const root = document.documentElement
+  root.classList.add('bd-cursor-ready')
   root.style.setProperty('cursor', BLANK_CURSOR, 'important')
   requestAnimationFrame(() => root.style.removeProperty('cursor'))
 
@@ -242,8 +243,14 @@ export function initCursor() {
   document.addEventListener('mouseover', handleOver)
   document.addEventListener('mouseleave', handleLeave)
 
+  let lastX = null
+  let lastY = null
   let frame = requestAnimationFrame(function tick() {
-    el.style.transform = 'translate3d(' + target.x + 'px, ' + target.y + 'px, 0)'
+    if (target.x !== lastX || target.y !== lastY) {
+      lastX = target.x
+      lastY = target.y
+      el.style.transform = 'translate3d(' + target.x + 'px, ' + target.y + 'px, 0)'
+    }
     frame = requestAnimationFrame(tick)
   })
 
@@ -285,9 +292,15 @@ export function initScrollLogo() {
   if (!box || !light || !dark) return () => {}
 
   let frame = 0
+  let headerSlot = document.querySelector('[data-logo-slot="header"]')
+  let cover = document.querySelector('[data-hero-cover]')
+  let lastTone = -1
+  let lastKey = ''
 
   const tick = () => {
-    const headerSlot = document.querySelector('[data-logo-slot="header"]')
+    if (!headerSlot) {
+      headerSlot = document.querySelector('[data-logo-slot="header"]')
+    }
 
     if (!headerSlot) {
       box.style.opacity = '0'
@@ -297,7 +310,6 @@ export function initScrollLogo() {
     }
 
     const headerRect = headerSlot.getBoundingClientRect()
-    const cover = document.querySelector('[data-hero-cover]')
     let tone = 1
 
     if (cover) {
@@ -306,16 +318,22 @@ export function initScrollLogo() {
       tone = Math.min(Math.max(overlap, 0), 1)
     }
 
-    setNavTone(tone)
+    if (tone !== lastTone) {
+      lastTone = tone
+      setNavTone(tone)
+      light.style.opacity = String(1 - tone)
+      dark.style.opacity = String(tone)
+    }
 
-    box.style.opacity = '1'
-    box.style.width = headerRect.width + 'px'
-    box.style.height = headerRect.width / LOGO_RATIO + 'px'
-    box.style.transform =
-      'translate3d(' + headerRect.left + 'px, ' + headerRect.top + 'px, 0)'
-
-    light.style.opacity = String(1 - tone)
-    dark.style.opacity = String(tone)
+    const key = headerRect.width + ':' + headerRect.left + ':' + headerRect.top
+    if (key !== lastKey) {
+      lastKey = key
+      box.style.opacity = '1'
+      box.style.width = headerRect.width + 'px'
+      box.style.height = headerRect.width / LOGO_RATIO + 'px'
+      box.style.transform =
+        'translate3d(' + headerRect.left + 'px, ' + headerRect.top + 'px, 0)'
+    }
 
     frame = requestAnimationFrame(tick)
   }

@@ -37,10 +37,18 @@
   endif
 -%}
 
+{%- liquid
+  assign bd_base = bd_src | split: '&width=' | first
+-%}
+
 {%- if bd_src != blank -%}
   <img
     class="{{ class }}"
     src="{{ bd_src }}"
+    {% if sizes != blank %}
+      srcset="{{ bd_base }}&width=200 200w, {{ bd_base }}&width=400 400w, {{ bd_base }}&width=900 900w"
+      sizes="{{ sizes }}"
+    {% endif %}
     alt="{{ alt | escape }}"
     width="{{ bd_w }}"
     height="{{ bd_w }}"

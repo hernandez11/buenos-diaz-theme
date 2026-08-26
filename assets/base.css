@@ -112,11 +112,11 @@ body {
   min-height: 0;
 }
 
-html,
-body,
-*,
-*::before,
-*::after {
+html.bd-cursor-ready,
+html.bd-cursor-ready body,
+html.bd-cursor-ready *,
+html.bd-cursor-ready *::before,
+html.bd-cursor-ready *::after {
   cursor: none !important;
 }
 
