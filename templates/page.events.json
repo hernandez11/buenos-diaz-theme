@@ -2,9 +2,7 @@
   "sections": {
     "events": {
       "type": "events",
-      "settings": {
-        "debug": true
-      }
+      "settings": {}
     }
   },
   "order": [

@@ -35,8 +35,7 @@
   assign center_virtual = center_copy | times: event_count | plus: default_index
 -%}
 
-{% if section.settings.debug %}
-  <pre class="bd-events__debug">
+<pre class="bd-events__debug">
 raw_events size: {{ raw_events.size }}
 event_count: {{ event_count }}
 default_index: {{ default_index }}
@@ -56,8 +55,7 @@ url via value : [{{ item.poster.value | image_url: width: 400 }}]
 url via prev  : [{{ item.poster.value.preview_image | image_url: width: 400 }}]
 gallery size  : {{ item.gallery.value.size }}
 {% endfor %}
-  </pre>
-{% endif %}
+</pre>
 
 {% if event_count == 0 %}
   <section class="bd-events-empty">
@@ -581,14 +579,7 @@ gallery size  : {{ item.gallery.value.size }}
 {% schema %}
 {
   "name": "Events",
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "debug",
-      "label": "Show debug output",
-      "default": false
-    }
-  ],
+  "settings": [],
   "presets": [
     {
       "name": "Events"
