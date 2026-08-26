@@ -6,27 +6,63 @@
 -%}
 
 {% if is_video %}
+  {%- liquid
+    assign small = blank
+    assign large = blank
+
+    for source in file.sources
+      if source.mime_type != 'video/mp4'
+        continue
+      endif
+
+      if source.height <= 480 and small == blank
+        assign small = source
+      endif
+
+      if source.height <= 720
+        if large == blank or source.height > large.height
+          assign large = source
+        endif
+      endif
+    endfor
+
+    if large == blank
+      for source in file.sources
+        if source.mime_type == 'video/mp4' and large == blank
+          assign large = source
+        endif
+      endfor
+    endif
+  -%}
+
   <video
     class="bd-detail__clip"
     muted
     loop
     playsinline
     autoplay
-    preload="auto"
+    preload="metadata"
     tabindex="-1"
     disablepictureinpicture
     controlslist="nodownload noplaybackrate noremoteplayback"
     aria-hidden="true"
+    {% if file.preview_image %}
+      poster="{{ file.preview_image | image_url: width: 1200 }}"
+    {% endif %}
     data-bd-clip
   >
-    {% for source in file.sources %}
-      <source src="{{ source.url }}" type="{{ source.mime_type }}">
-    {% endfor %}
+    {% if small != blank %}
+      <source src="{{ small.url }}" type="video/mp4" media="(max-width: 767px)">
+    {% endif %}
+    {% if large != blank %}
+      <source src="{{ large.url }}" type="video/mp4">
+    {% endif %}
   </video>
 {% else %}
+  {%- assign photo = file.preview_image | default: file -%}
   <img
     class="bd-detail__photo"
-    src="{{ file | image_url: width: 1600 }}"
+    src="{{ photo | image_url: width: 1600 }}"
     alt=""
     width="1600"
     height="1060"

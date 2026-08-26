@@ -33,9 +33,10 @@
 
 <div class="bd-detail__hero">
   {% if poster != blank %}
+    {%- assign hero_img = poster.preview_image | default: poster -%}
     <img
       class="bd-detail__hero-image"
-      src="{{ poster | image_url: width: 1600 }}"
+      src="{{ hero_img | image_url: width: 1600 }}"
       alt="{{ event.title.value | escape }}"
       width="1600"
       height="2000"

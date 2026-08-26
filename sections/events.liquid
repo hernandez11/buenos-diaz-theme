@@ -82,9 +82,10 @@
                 >
                   <div class="bd-events__tile-reveal">
                     {% if item.poster.value != blank %}
+                      {%- assign tile_img = item.poster.value.preview_image | default: item.poster.value -%}
                       <img
                         class="bd-events__tile-image"
-                        src="{{ item.poster.value | image_url: width: 1200 }}"
+                        src="{{ tile_img | image_url: width: 1200 }}"
                         alt="{{ item.title.value | escape }}"
                         width="1200"
                         height="1500"
@@ -154,9 +155,10 @@
 
                 <div class="bd-events__card-frame">
                   {% if item.poster.value != blank %}
+                    {%- assign card_img = item.poster.value.preview_image | default: item.poster.value -%}
                     <img
                       class="bd-events__card-image"
-                      src="{{ item.poster.value | image_url: width: 900 }}"
+                      src="{{ card_img | image_url: width: 900 }}"
                       alt="{{ item.title.value | escape }}"
                       width="900"
                       height="1125"
