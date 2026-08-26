@@ -102,10 +102,15 @@ export function initReveals(root = document) {
 
     observer.observe(el)
 
-    failsafe = window.setTimeout(() => {
-      show()
-      observer.disconnect()
-    }, REVEAL_FAILSAFE_MS)
+    const rect = el.getBoundingClientRect()
+    const startsInView = rect.top < window.innerHeight && rect.bottom > 0
+
+    if (startsInView) {
+      failsafe = window.setTimeout(() => {
+        show()
+        observer.disconnect()
+      }, REVEAL_FAILSAFE_MS)
+    }
   })
 }
 

@@ -239,12 +239,18 @@ export function initDetailFrames() {
 
     observer.observe(frame)
     observers.push(observer)
-    timers.push(
-      window.setTimeout(() => {
-        show()
-        observer.disconnect()
-      }, 3000),
-    )
+
+    const rect = frame.getBoundingClientRect()
+    const startsInView = rect.top < window.innerHeight && rect.bottom > 0
+
+    if (startsInView) {
+      timers.push(
+        window.setTimeout(() => {
+          show()
+          observer.disconnect()
+        }, 3000),
+      )
+    }
   })
 
   return () => {
