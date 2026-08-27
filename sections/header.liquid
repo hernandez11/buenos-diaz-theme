@@ -43,10 +43,8 @@
 
 <div class="bd-dropdown" id="primary-navigation" data-bd-dropdown>
   {%- assign nav_home = routes.root_url -%}
-  {%- assign nav_shop = routes.all_products_collection_url -%}
 
   {% render 'nav-link', url: nav_home, label: 'Home', here: here %}
-  {% render 'nav-link', url: nav_shop, label: 'Shop', here: here %}
   {% render 'nav-link', url: '/pages/events', label: 'Events', here: here %}
   {% render 'nav-link', url: '/pages/faq', label: 'FAQ', here: here %}
 

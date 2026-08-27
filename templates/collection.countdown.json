@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "countdown": {
+      "type": "countdown",
+      "settings": {}
+    }
+  },
+  "order": [
+    "countdown"
+  ]
+}

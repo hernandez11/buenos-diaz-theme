@@ -3,6 +3,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 {%- liquid
+  assign bd_noindex = 'collection,product,list-collections,search,cart' | split: ','
+-%}
+{%- if bd_noindex contains request.page_type -%}
+  <meta name="robots" content="noindex,nofollow">
+{%- endif -%}
+
+{%- liquid
   assign og_title = page_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'

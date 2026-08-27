@@ -1,3 +1,10 @@
+{%- liquid
+  assign bd_hidden = 'collection,product,list-collections,search,cart' | split: ','
+  assign bd_template = request.page_type
+  if bd_hidden contains bd_template
+    assign bd_template = '404'
+  endif
+-%}
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
@@ -21,7 +28,7 @@
     </script>
   </head>
 
-  <body class="template-{{ request.page_type }}">
+  <body class="template-{{ bd_template }}">
     <div class="bd-shell">
       {% sections 'header-group' %}
 
