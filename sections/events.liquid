@@ -1,6 +1,11 @@
 {%- liquid
   assign now_epoch = 'now' | date: '%s' | plus: 0
 
+  assign detail_handle = ''
+  if request.page_type == 'metaobject' and metaobject.system.type == 'event'
+    assign detail_handle = metaobject.system.handle
+  endif
+
   assign sort_keys = ''
   for entry in shop.metaobjects.event.values
     assign epoch = entry.date.value | date: '%s'
@@ -19,15 +24,24 @@
   assign event_count = handles.size
 
   assign default_index = 0
-  assign found_past = false
-  for h in handles
-    assign ev = metaobjects.event[h]
-    assign ev_epoch = ev.date.value | date: '%s' | plus: 0
-    if ev_epoch <= now_epoch and found_past == false
-      assign default_index = forloop.index0
-      assign found_past = true
-    endif
-  endfor
+  if detail_handle != blank
+    for h in handles
+      if h == detail_handle
+        assign default_index = forloop.index0
+        break
+      endif
+    endfor
+  else
+    assign found_past = false
+    for h in handles
+      assign ev = metaobjects.event[h]
+      assign ev_epoch = ev.date.value | date: '%s' | plus: 0
+      if ev_epoch <= now_epoch and found_past == false
+        assign default_index = forloop.index0
+        assign found_past = true
+      endif
+    endfor
+  endif
 
   assign buffer_copies = 7
   assign center_copy = 3
@@ -59,11 +73,13 @@
   </section>
 {% else %}
   <section
-    class="bd-events"
+    class="bd-events{% if detail_handle != blank %} is-detail is-leaving{% endif %}"
     data-bd-events
     data-bd-count="{{ event_count }}"
     data-bd-copies="{{ buffer_copies }}"
     data-bd-center="{{ center_virtual }}"
+    data-bd-detail="{% if detail_handle != blank %}true{% else %}false{% endif %}"
+    data-bd-index-url="/pages/events"
   >
     <div class="bd-events__pin-spacer" data-bd-events-spacer></div>
 
@@ -112,7 +128,7 @@
                   endcase
                 -%}
                 <div
-                  class="bd-events__tile"
+                  class="bd-events__tile{% if detail_handle != blank and dist != 0 %} is-muted{% endif %}"
                   style="flex-basis: {{ tw }}cqw"
                   data-bd-tile
                   data-bd-v="{{ v }}"
@@ -464,10 +480,43 @@
     display: none;
   }
 
+  .bd-events.is-detail {
+    flex: 0 0 auto;
+  }
+
+  .bd-events.is-detail .bd-events__pin-spacer {
+    display: none;
+  }
+
+  .bd-events.is-detail .bd-events__stage {
+    position: relative;
+    flex: 0 0 auto;
+    min-height: 0;
+    height: calc(clamp(220px, 14cqw, 280px) / 2 + min(clamp(400px, 63.4cqw, 570px), 66svh));
+  }
+
+  .bd-events.is-detail .bd-events__center {
+    top: calc(clamp(220px, 14cqw, 280px) / 2);
+    transform: none;
+  }
+
+  .bd-events.is-detail .bd-events__below {
+    top: calc(clamp(220px, 14cqw, 280px) / 2 + min(clamp(400px, 63.4cqw, 570px), 66svh));
+  }
+
+  .bd-events.is-detail .bd-events__tile {
+    cursor: default;
+    pointer-events: none;
+  }
+
   @media (max-width: 767px) {
     .bd-events__stage,
     .bd-events__pin-spacer {
       display: none !important;
+    }
+
+    .bd-events.is-detail {
+      display: none;
     }
 
     .bd-events__mobile {

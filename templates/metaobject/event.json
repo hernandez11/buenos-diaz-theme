@@ -1,11 +1,16 @@
 {
   "sections": {
+    "events": {
+      "type": "events",
+      "settings": {}
+    },
     "detail": {
       "type": "event-detail",
       "settings": {}
     }
   },
   "order": [
+    "events",
     "detail"
   ]
 }
