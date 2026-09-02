@@ -347,6 +347,8 @@ export function initScrollLogo() {
   return () => cancelAnimationFrame(frame)
 }
 
+const MENU_PATH = '/menu'
+
 export function initHeader() {
   const header = document.querySelector('[data-bd-header]')
   const toggle = document.querySelector('[data-bd-menu-toggle]')
@@ -436,14 +438,23 @@ export function initHeader() {
     return Math.max(0, Math.min(top, max))
   }
 
+  const tidyMenuUrl = () => {
+    try {
+      window.history.replaceState(null, '', MENU_PATH)
+    } catch (error) {
+      return
+    }
+  }
+
   const scrollToMenu = () => {
     const lenis = getLenis()
     if (lenis) {
       lenis.resize()
       lenis.scrollTo(menuTarget(), { duration: 1.8 })
-      return
+    } else {
+      window.scrollTo({ top: menuTarget(), behavior: 'smooth' })
     }
-    window.scrollTo({ top: menuTarget(), behavior: 'smooth' })
+    tidyMenuUrl()
   }
 
   const onDropdownClick = (event) => {
@@ -497,6 +508,7 @@ export function initHeader() {
       } else {
         window.scrollTo({ top: menuTarget() })
       }
+      tidyMenuUrl()
     }, 300)
   }
 
