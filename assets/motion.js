@@ -423,6 +423,29 @@ export function initHeader() {
     window.scrollTo({ top: contactTarget(), behavior: 'smooth' })
   }
 
+  const menuTarget = () => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+    const node =
+      document.querySelector('[data-bd-menu-columns]') ||
+      document.querySelector('[data-bd-menu-section]')
+    if (!node) return 0
+
+    const headerHeight =
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 88
+    const top = node.getBoundingClientRect().top + window.scrollY - headerHeight
+    return Math.max(0, Math.min(top, max))
+  }
+
+  const scrollToMenu = () => {
+    const lenis = getLenis()
+    if (lenis) {
+      lenis.resize()
+      lenis.scrollTo(menuTarget(), { duration: 1.8 })
+      return
+    }
+    window.scrollTo({ top: menuTarget(), behavior: 'smooth' })
+  }
+
   const onDropdownClick = (event) => {
     const link = event.target.closest('a')
     if (!link) return
@@ -442,6 +465,14 @@ export function initHeader() {
       return
     }
 
+    if (href.endsWith('#menu')) {
+      event.preventDefault()
+      setOpen(false)
+      if (window.location.pathname === '/') scrollToMenu()
+      else window.location.href = href
+      return
+    }
+
     setOpen(false)
   }
 
@@ -453,6 +484,18 @@ export function initHeader() {
         lenis.scrollTo(contactTarget(), { immediate: true })
       } else {
         window.scrollTo({ top: contactTarget() })
+      }
+    }, 300)
+  }
+
+  if (window.location.hash === '#menu' && document.querySelector('[data-bd-menu-section]')) {
+    window.setTimeout(() => {
+      const lenis = getLenis()
+      if (lenis) {
+        lenis.resize()
+        lenis.scrollTo(menuTarget(), { immediate: true })
+      } else {
+        window.scrollTo({ top: menuTarget() })
       }
     }, 300)
   }
