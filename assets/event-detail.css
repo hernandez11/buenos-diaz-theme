@@ -188,7 +188,6 @@ body.bd-detail-open .bd-main {
     gap: 1rem;
     padding: 1.5rem 6% 0;
     pointer-events: auto;
-    order: 2;
   }
 
   .bd-detail__description {

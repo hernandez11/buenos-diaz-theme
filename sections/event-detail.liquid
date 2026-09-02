@@ -61,6 +61,11 @@
 -%}
 
 <div class="bd-detail-root" data-bd-detail-root>
+  <div class="bd-detail__meta">
+    <span class="bd-detail__date">{{ event.date.value | date: '%m.%d' }}</span>
+    <h1 class="bd-detail__title">{{ event.title.value }}</h1>
+  </div>
+
   {% if event.description.value != blank %}
     <div class="bd-detail__overlay">
       <div class="reveal-mask" data-reveal-delay="0.16" data-reveal-duration="0.9">
@@ -70,11 +75,6 @@
       </div>
     </div>
   {% endif %}
-
-  <div class="bd-detail__meta">
-    <span class="bd-detail__date">{{ event.date.value | date: '%m.%d' }}</span>
-    <h1 class="bd-detail__title">{{ event.title.value }}</h1>
-  </div>
 
   <div class="bd-detail">
     <div class="bd-detail__stack">
