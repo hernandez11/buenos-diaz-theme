@@ -9,29 +9,37 @@
   {%- liquid
     assign small = blank
     assign large = blank
+    assign any_mp4 = blank
 
     for source in file.sources
-      if source.mime_type != 'video/mp4'
+      assign su = source.url
+      unless su contains '.mp4'
         continue
+      endunless
+
+      if any_mp4 == blank
+        assign any_mp4 = source
       endif
 
-      if source.height <= 480 and small == blank
+      if su contains '480p'
         assign small = source
       endif
 
-      if source.height <= 720
-        if large == blank or source.height > large.height
-          assign large = source
-        endif
+      if su contains '720p'
+        assign large = source
       endif
     endfor
 
     if large == blank
-      for source in file.sources
-        if source.mime_type == 'video/mp4' and large == blank
-          assign large = source
-        endif
-      endfor
+      assign large = small
+    endif
+
+    if large == blank
+      assign large = any_mp4
+    endif
+
+    if small == blank
+      assign small = large
     endif
   -%}
 
@@ -40,8 +48,7 @@
     muted
     loop
     playsinline
-    autoplay
-    preload="metadata"
+    preload="none"
     tabindex="-1"
     disablepictureinpicture
     controlslist="nodownload noplaybackrate noremoteplayback"

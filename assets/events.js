@@ -466,27 +466,63 @@ export function initClips() {
   const clips = Array.from(document.querySelectorAll('[data-bd-clip]:not([data-bd-clip-bound])'))
   if (clips.length === 0) return () => {}
 
-  const resume = () => {
+  const visible = new Set()
+
+  const play = (clip) => {
+    if (!visible.has(clip)) return
     if (document.visibilityState !== 'visible') return
+    const attempt = clip.play()
+    if (attempt && attempt.catch) attempt.catch(() => {})
+  }
+
+  const onCanPlay = (event) => play(event.target)
+
+  const onVisibilityChange = () => {
     clips.forEach((clip) => {
-      const attempt = clip.play()
-      if (attempt && attempt.catch) attempt.catch(() => {})
+      if (document.visibilityState === 'visible') play(clip)
+      else clip.pause()
     })
+  }
+
+  let observer = null
+
+  if (typeof IntersectionObserver !== 'undefined') {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const clip = entry.target
+          if (entry.isIntersecting) {
+            visible.add(clip)
+            if (clip.preload !== 'auto') clip.preload = 'auto'
+            play(clip)
+          } else {
+            visible.delete(clip)
+            clip.pause()
+          }
+        })
+      },
+      { rootMargin: '150px 0px' },
+    )
   }
 
   clips.forEach((clip) => {
     clip.setAttribute('data-bd-clip-bound', '')
-    clip.addEventListener('pause', resume)
-    clip.addEventListener('canplay', resume)
+    clip.addEventListener('canplay', onCanPlay)
+
+    if (observer) {
+      observer.observe(clip)
+    } else {
+      visible.add(clip)
+      clip.preload = 'auto'
+      play(clip)
+    }
   })
-  document.addEventListener('visibilitychange', resume)
-  resume()
+
+  document.addEventListener('visibilitychange', onVisibilityChange)
 
   return () => {
-    clips.forEach((clip) => {
-      clip.removeEventListener('pause', resume)
-      clip.removeEventListener('canplay', resume)
-    })
-    document.removeEventListener('visibilitychange', resume)
+    clips.forEach((clip) => clip.removeEventListener('canplay', onCanPlay))
+    if (observer) observer.disconnect()
+    document.removeEventListener('visibilitychange', onVisibilityChange)
   }
 }
