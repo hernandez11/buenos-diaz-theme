@@ -728,13 +728,17 @@ export function initContactScroll() {
     target = clamp01(-rect.top / travel)
   }
 
-  const apply = (t) => {
+  let endHeight = 100
+
+  const refreshMetrics = () => {
     const stage = photo.parentElement
     const stageHeight = stage ? stage.clientHeight : window.innerHeight
     const footerHeight =
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--footer-h')) || 56
-    const endTop = (footerHeight / stageHeight) * 100
-    const endHeight = 100 - endTop
+    endHeight = 100 - (footerHeight / stageHeight) * 100
+  }
+
+  const apply = (t) => {
 
     photo.style.right = RIGHT_INSET + '%'
     photo.style.bottom = '0'
@@ -758,6 +762,7 @@ export function initContactScroll() {
   const start = () => {
     if (running) return
     running = true
+    refreshMetrics()
     measure()
     current = target
     apply(current)
@@ -778,17 +783,23 @@ export function initContactScroll() {
     else start()
   }
 
+  const onResize = () => {
+    refreshMetrics()
+    measure()
+  }
+
+  refreshMetrics()
   sync()
   stacked.addEventListener('change', sync)
   window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('resize', onScroll)
+  window.addEventListener('resize', onResize)
 
   return () => {
     stop()
     revealObserver.disconnect()
     stacked.removeEventListener('change', sync)
     window.removeEventListener('scroll', onScroll)
-    window.removeEventListener('resize', onScroll)
+    window.removeEventListener('resize', onResize)
   }
 }
 
