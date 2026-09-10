@@ -638,14 +638,13 @@ export function initContactForm() {
     paint()
   }
 
-  const onSubmit = (event) => {
-    if (!validity().ok) {
-      event.preventDefault()
-      return
-    }
+  let submitting = false
+
+  const advance = () => {
+    if (submitting) return
+    if (!validity().ok) return
 
     if (index < steps.length - 1) {
-      event.preventDefault()
       index += 1
       paint()
       const input = currentInput()
@@ -653,10 +652,33 @@ export function initContactForm() {
       return
     }
 
+    submitting = true
+
     if (next) {
       next.disabled = true
       next.textContent = 'Sending'
     }
+
+    if (form.requestSubmit) form.requestSubmit()
+    else form.submit()
+  }
+
+  const onNextClick = (event) => {
+    event.preventDefault()
+    advance()
+  }
+
+  const onKeydown = (event) => {
+    if (event.key !== 'Enter') return
+    if (!event.target.matches('[data-bd-input]')) return
+    if (event.target.tagName === 'TEXTAREA') return
+    event.preventDefault()
+    advance()
+  }
+
+  const onSubmit = (event) => {
+    if (submitting) return
+    event.preventDefault()
   }
 
   const onBack = () => {
@@ -668,14 +690,18 @@ export function initContactForm() {
   }
 
   form.addEventListener('input', onInput)
+  form.addEventListener('keydown', onKeydown)
   form.addEventListener('submit', onSubmit)
+  if (next) next.addEventListener('click', onNextClick)
   if (back) back.addEventListener('click', onBack)
 
   paint()
 
   return () => {
     form.removeEventListener('input', onInput)
+    form.removeEventListener('keydown', onKeydown)
     form.removeEventListener('submit', onSubmit)
+    if (next) next.removeEventListener('click', onNextClick)
     if (back) back.removeEventListener('click', onBack)
   }
 }
