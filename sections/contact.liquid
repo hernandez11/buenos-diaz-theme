@@ -40,7 +40,7 @@
           <div class="bd-contact__column">
             <div class="bd-contact__field">
               <span class="bd-contact__label">{{ section.settings.email_label }}</span>
-              <span class="bd-contact__value">{{ section.settings.email }}</span>
+              {% render 'email-address', email: section.settings.email, class: 'bd-contact__value' %}
             </div>
             <div class="bd-contact__field">
               <span class="bd-contact__label">{{ section.settings.social_label }}</span>

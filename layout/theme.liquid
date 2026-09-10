@@ -63,6 +63,7 @@
         initContactForm,
         initContactScroll,
         initFaq,
+        initEmail,
       } from '{{ 'motion.js' | asset_url }}';
       import {
         initEvents,
@@ -114,6 +115,7 @@
         run('contactScroll', () => initContactScroll());
         run('contactForm', () => initContactForm());
         run('faq', () => initFaq());
+        run('email', () => initEmail());
         run('eventCards', () => initEventCards());
         run('clips', () => initClips());
         run('countdown', () => initCountdown());

@@ -855,3 +855,22 @@ export function initCountdown() {
     document.removeEventListener('visibilitychange', onVisible)
   }
 }
+
+export function initEmail() {
+  const nodes = Array.from(document.querySelectorAll('[data-bd-email]'))
+
+  nodes.forEach((node) => {
+    const encoded = node.getAttribute('data-bd-email')
+    if (!encoded) return
+
+    try {
+      const value = window.atob(encoded)
+      if (value) node.textContent = value
+      node.removeAttribute('data-bd-email')
+    } catch (error) {
+      node.removeAttribute('data-bd-email')
+    }
+  })
+
+  return () => {}
+}

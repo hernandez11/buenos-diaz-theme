@@ -1,0 +1,11 @@
+{%- liquid
+  assign bd_parts = email | split: '@'
+  assign bd_user = bd_parts[0]
+  assign bd_domain = bd_parts[1]
+  assign bd_masked = bd_domain | replace: '.', ' [dot] '
+-%}
+{%- if bd_domain == blank -%}
+  <span class="{{ class }}">{{ email }}</span>
+{%- else -%}
+  <span class="{{ class }}" data-bd-email="{{ email | base64_encode }}">{{ bd_user }} [at] {{ bd_masked }}</span>
+{%- endif -%}
