@@ -430,6 +430,8 @@ export function initDetailFrames() {
       return
     }
 
+    const watched = frame.closest('.bd-detail__column') || frame.parentElement || frame
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -440,7 +442,7 @@ export function initDetailFrames() {
       { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
     )
 
-    observer.observe(frame)
+    observer.observe(watched)
     observers.push(observer)
 
     const rect = frame.getBoundingClientRect()
