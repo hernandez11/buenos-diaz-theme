@@ -9,6 +9,10 @@ body.bd-detail-open .bd-main {
   position: relative;
 }
 
+body.bd-detail-open .bd-main > .shopify-section {
+  position: static;
+}
+
 .bd-detail__overlay {
   position: absolute;
   top: var(--header-h, 88px);
