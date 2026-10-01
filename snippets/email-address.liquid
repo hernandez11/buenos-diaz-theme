@@ -2,7 +2,11 @@
   assign bd_label = email | default: shop.email
 -%}
 {%- if bd_label contains '@' -%}
-  <a class="{{ class }}" href="mailto:{{ bd_label }}">{{ bd_label }}</a>
+  <a
+    class="{{ class }}"
+    href="mailto:{{ bd_label }}"
+    style="color: inherit; text-decoration: none; -webkit-text-fill-color: currentColor;"
+  >{{ bd_label }}</a>
 {%- else -%}
   <span class="{{ class }}">{{ bd_label }}</span>
 {%- endif -%}
