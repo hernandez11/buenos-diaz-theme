@@ -2,11 +2,27 @@
   assign bd_label = email | default: shop.email
 -%}
 {%- if bd_label contains '@' -%}
-  <a
-    class="{{ class }}"
-    href="mailto:{{ bd_label }}"
-    style="color: inherit; text-decoration: none; -webkit-text-fill-color: currentColor;"
-  >{{ bd_label }}</a>
+  <style>
+    .bd-email-link {
+      color: inherit;
+      -webkit-text-fill-color: currentColor;
+      text-decoration: none;
+      opacity: 1;
+      transition: opacity 0.25s ease;
+    }
+
+    .bd-email-link:hover,
+    .bd-email-link:focus-visible {
+      opacity: 0.55;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bd-email-link {
+        transition: none;
+      }
+    }
+  </style>
+  <a class="{{ class }} bd-email-link" href="mailto:{{ bd_label }}">{{ bd_label }}</a>
 {%- else -%}
   <span class="{{ class }}">{{ bd_label }}</span>
 {%- endif -%}
