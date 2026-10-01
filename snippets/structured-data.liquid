@@ -7,60 +7,72 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CafeOrCoffeeShop",
-  "@id": "{{ request.origin }}/#business",
-  "name": {{ bd_name | json }},
-  "alternateName": ["Buenos Diaz Coffee", "Buenos Diaz Coffee NYC", "Buenos Díaz NYC"],
-  "url": "{{ request.origin }}/",
-  "email": {{ bd_email | json }},
-  "logo": {{ bd_logo | json }},
-  "image": {{ bd_hero | json }},
-  "description": "Mobile specialty espresso bar serving New York City, pouring coffee from a family of Chiapas coffee farmers at weddings, corporate events, brand activations and popups.",
-  "priceRange": "$$",
-  "servesCuisine": "Mexican",
-  "currenciesAccepted": "USD",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "New York",
-    "addressRegion": "NY",
-    "addressCountry": "US"
-  },
-  "areaServed": [
-    { "@type": "City", "name": "New York" },
-    { "@type": "AdministrativeArea", "name": "Manhattan" },
-    { "@type": "AdministrativeArea", "name": "Brooklyn" },
-    { "@type": "AdministrativeArea", "name": "Queens" },
-    { "@type": "AdministrativeArea", "name": "The Bronx" },
-    { "@type": "AdministrativeArea", "name": "Staten Island" }
-  ],
-  "sameAs": ["https://www.instagram.com/buenosdiaznyc/"],
-  "makesOffer": [
+  "@graph": [
     {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Wedding coffee cart",
-        "serviceType": "Mobile espresso bar for weddings",
-        "areaServed": "New York City"
-      }
+      "@type": "WebSite",
+      "@id": "{{ request.origin }}/#website",
+      "name": {{ bd_name | json }},
+      "alternateName": "Buenos Diaz Coffee",
+      "url": "{{ request.origin }}/",
+      "publisher": { "@id": "{{ request.origin }}/#business" }
     },
     {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Corporate coffee catering",
-        "serviceType": "Mobile espresso bar for offices and conferences",
-        "areaServed": "New York City"
-      }
-    },
-    {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": "Brand activation espresso bar",
-        "serviceType": "Mobile espresso bar for launches and activations",
-        "areaServed": "New York City"
-      }
+      "@type": "CafeOrCoffeeShop",
+      "@id": "{{ request.origin }}/#business",
+      "name": {{ bd_name | json }},
+      "alternateName": ["Buenos Diaz Coffee", "Buenos Diaz Coffee NYC", "Buenos Díaz NYC"],
+      "url": "{{ request.origin }}/",
+      "email": {{ bd_email | json }},
+      "logo": {{ bd_logo | json }},
+      "image": {{ bd_hero | json }},
+      "description": "Mobile specialty espresso bar serving New York City, pouring coffee from a family of Chiapas coffee farmers at weddings, corporate events, brand activations and popups.",
+      "priceRange": "$$",
+      "servesCuisine": "Mexican",
+      "currenciesAccepted": "USD",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "addressCountry": "US"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "New York" },
+        { "@type": "AdministrativeArea", "name": "Manhattan" },
+        { "@type": "AdministrativeArea", "name": "Brooklyn" },
+        { "@type": "AdministrativeArea", "name": "Queens" },
+        { "@type": "AdministrativeArea", "name": "The Bronx" },
+        { "@type": "AdministrativeArea", "name": "Staten Island" }
+      ],
+      "sameAs": ["https://www.instagram.com/buenosdiaznyc/"],
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Wedding coffee cart",
+            "serviceType": "Mobile espresso bar for weddings",
+            "areaServed": "New York City"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Corporate coffee catering",
+            "serviceType": "Mobile espresso bar for offices and conferences",
+            "areaServed": "New York City"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Brand activation espresso bar",
+            "serviceType": "Mobile espresso bar for launches and activations",
+            "areaServed": "New York City"
+          }
+        }
+      ]
     }
   ]
 }
