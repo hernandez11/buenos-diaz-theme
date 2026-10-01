@@ -833,6 +833,7 @@ export function initFaq() {
   const frame = document.querySelector('[data-bd-faq-frame]')
   const image = document.querySelector('[data-bd-faq-image]')
   if (!frame || !image) return () => {}
+  if (image.classList.contains('bd-faq__image--fitted')) return () => {}
   return initParallax(frame, image, { speed: -0.42 })
 }
 
