@@ -1,11 +1,8 @@
 {%- liquid
-  assign bd_parts = email | split: '@'
-  assign bd_user = bd_parts[0]
-  assign bd_domain = bd_parts[1]
-  assign bd_masked = bd_domain | replace: '.', ' [dot] '
+  assign bd_label = email | default: shop.email
 -%}
-{%- if bd_domain == blank -%}
-  <span class="{{ class }}">{{ email }}</span>
+{%- if bd_label contains '@' -%}
+  <a class="{{ class }}" href="mailto:{{ bd_label }}">{{ bd_label }}</a>
 {%- else -%}
-  <span class="{{ class }}" data-bd-email="{{ email | base64_encode }}">{{ bd_user }} [at] {{ bd_masked }}</span>
+  <span class="{{ class }}">{{ bd_label }}</span>
 {%- endif -%}
