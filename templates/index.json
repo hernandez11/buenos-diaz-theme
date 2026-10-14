@@ -24,24 +24,24 @@
           "type": "entry",
           "settings": {
             "column": "1",
-            "name": "Fresa Horchata Latte",
-            "description": "Double espresso with strawberry puree + creamy oatmilk horchata spiced with warm cinnamon."
+            "name": "El Nogál",
+            "description": "Toasted pecan and Mexican vanilla over double espresso and steamed milk. Inspired by the fall desserts of southern Mexico."
           }
         },
         "entry_2": {
           "type": "entry",
           "settings": {
             "column": "1",
-            "name": "Cajeta Cortado",
-            "description": "Double espresso with cajeta, a rich Mexican caramel made from slow-cooked goat’s milk."
+            "name": "Cafe de Olla Latte",
+            "description": "Double espresso steeped with aromatic spices. This latte captures the soul of traditional Mexican coffee. It’s warm, spiced, and deeply rooted in heritage."
           }
         },
         "entry_3": {
           "type": "entry",
           "settings": {
             "column": "1",
-            "name": "Guava Cream Top",
-            "description": "Double espresso latte layered beneath a silky guava and strawberry cold foam."
+            "name": "Calabaza Cream Top",
+            "description": "Double espresso latte beneath a silky pumpkin cold foam with piloncillo and cinnamon. Inspired by calabaza en tacha, a classic Mexican fall dessert."
           }
         },
         "pair_4": {
@@ -80,7 +80,7 @@
           "type": "entry",
           "settings": {
             "column": "3",
-            "name": "Guava Roja",
+            "name": "Guava Roja - Refresher",
             "description": "Tropical guava layered with the vibrant tang of hibiscus and subtle warming spices. Inspired by the refreshing jamaica agua fresca found across Mexico."
           }
         },
